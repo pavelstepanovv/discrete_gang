@@ -1,4 +1,4 @@
-#выполнили Мулюкина Е.В. и Экажев Р.Х.
+#выполнили Мулюкина Е.В., гр. 4384 и Экажев Р.Х., гр. 4384
 
 class Natural:
     def __init__(self, num: str):
@@ -8,8 +8,8 @@ class Natural:
         self.num = num
     def __str__(self):
         return ''.join(map(str, self.num))
-
-# 1. Сравнение натуральных чисел: 2 - если первое больше второго, 0, если равно, 1 иначе.
+    
+    # 1. Сравнение натуральных чисел: 2 - если первое больше второго, 0, если равно, 1 иначе.
     def COM_NN_D(self, other) -> int:
     # Сравнение по длине
         if len(self.num) > len(other.num):
@@ -17,24 +17,24 @@ class Natural:
         elif len(self.num) < len(other.num):
             return 1
     
-    # Если длины равны, сравниваем по цифрам
+        # Если длины равны, сравниваем по цифрам
         for i in range(len(self.num)):
             if self.num[i] > other.num[i]:
                 return 2
             elif self.num[i] < other.num[i]:
                 return 1
     
-    # Все цифры равны
+        # Все цифры равны
         return 0
 
-# 2. Проверка на ноль: если число не равно нулю, то «да» иначе «нет»
+    # 2. Проверка на ноль: если число не равно нулю, то «да» иначе «нет»
     def NZER_N_B(self):
-    # Упрощенная проверка: если число равно "0"
+        # Упрощенная проверка: если число равно "0"
         if len(self.num) == 1 and self.num[0] == 0:
             return 'нет'
         return 'да'
 
-# 3. Добавление 1 к натуральному числу
+    # 3. Добавление 1 к натуральному числу
     def ADD_1N_N(self):
         num = self.num[::-1] # работаем с перевернутым числом (с младших разрядов)
         carry = 1 # начинаем с переноса 1
@@ -49,9 +49,7 @@ class Natural:
 
         return Natural(''.join(map(str, num[::-1])))
 
-
-
-#4. Сложение натуральных чисел
+    #4. Сложение натуральных чисел
     def ADD_NN_N(self, other):
         if self.COM_NN_D(other) == 1:
             smaller = self.num[::-1] # делаем копии чисел и переворачиваем их
@@ -76,7 +74,7 @@ class Natural:
 
         return Natural(''.join(map(str, result[::-1]))) # результат переворачиваем
 
-# 5. Вычитание из первого большего натурального числа второго меньшего или равного
+    # 5. Вычитание из первого большего натурального числа второго меньшего или равного
     def SUB_NN_N(self, other) -> 'Natural':
         compare = self.COM_NN_D(other)
 
@@ -103,14 +101,14 @@ class Natural:
             digit_diff = current_digit - b[i] # вычитаем цифру второго числа
             result.append(digit_diff)
 
-    # Убираем ведущие нули
+        # Убираем ведущие нули
         while len(result) > 1 and result[-1] == 0:
             result.pop()
     
         result.reverse()
         return Natural(''.join(map(str, result)))  # возвращаем Natural
 
-# 6. Умножение натурального числа на цифру
+    # 6. Умножение натурального числа на цифру
     def MUL_ND_N(self, digit: int):
         if not (0 <= digit <= 9):
             raise ValueError('Данные не являются цифрой!')
@@ -138,7 +136,7 @@ class Natural:
             raise ValueError('Число k должно быть натуральным!')
         return Natural(str(self) + '0' * k)
 
-# 8. Умножение натуральных чисел
+    # 8. Умножение натуральных чисел
     def MUL_NN_N(self, other) -> 'Natural':
         if (len(self.num) == 1 and self.num[0] == 0) or (len(other.num) == 1 and other.num[0] == 0): # если хоть одно из чисел равно нулю
             return Natural('0')
@@ -153,11 +151,16 @@ class Natural:
 
         return result
 
-#9. Вычитание из натурального, умноженного на цифру для случая с неотрицательном результатом
+    #9. Вычитание из натурального, умноженного на цифру для случая с неотрицательным результатом
     def SUB_NDN_N(self, other, digit):
-        return self.SUB_NN_N(other.MUL_ND_N(digit))
+        compare = self.COM_NN_D(other.MUL_ND_N(digit))
 
-#10. Вычисление первой цифры деления большего натурального на меньшее,домноженное на 10^k,где k - номер позиции этой цифры (номер считается с нуля)
+        if compare == 1: # если первое число оказалось меньше второго, умноженного на цифру, выбрасывает ошибку
+            raise ValueError("Первое число должно быть больше или равно второму, умноженному на цифру")
+        elif compare == 0 or compare == 2: # иначе возвращаем результат вычитания
+            return self.SUB_NN_N(other.MUL_ND_N(digit))
+
+    #10. Вычисление первой цифры деления большего натурального на меньшее, домноженное на 10^k, где k - номер позиции этой цифры (номер считается с нуля)
     def DIV_NN_Dk(self, other, k):
         #проверка: делимое должно быть >= делителя
         if self.COM_NN_D(other) == 1:
@@ -171,7 +174,7 @@ class Natural:
                 return i - 1 #возвращаем предыдущую цифру
         return 9
 
- #11. Неполное частное от деления первого натурального числа на второе с остатком (делитель отличен от нуля)
+    #11. Неполное частное от деления первого натурального числа на второе с остатком (делитель отличен от нуля)
     def DIV_NN_N(self, other):
         if other.COM_NN_D(Natural('0')) == 0:
             raise ValueError('Деление на ноль невозможно!')
@@ -191,7 +194,7 @@ class Natural:
 
         return quotient
 
-#12. Остаток от деления первого натурального числа на второе натуральное (делитель отличен от нуля)
+    #12. Остаток от деления первого натурального числа на второе натуральное (делитель отличен от нуля)
     def MOD_NN_N(self, other):
         if self.COM_NN_D(other) == 1:  #если делимое меньше делителя
             return Natural(str(self))
@@ -203,7 +206,7 @@ class Natural:
 
         return remainder
 
-#13. НОД наутральных чисел
+    #13. НОД натуральных чисел
     def GCF_NN_N(self, other):
         a = Natural(str(self))
         b = Natural(str(other))
@@ -227,10 +230,6 @@ class Natural:
     #14. НОК натуральных чисел
     def LCM_NN_N(self, other):
         return self.MUL_NN_N(other).DIV_NN_N(self.GCF_NN_N(other))  #возвращаем произведение чисел, деленное на НОД
-
-
-
-
 
 #Тесты
 def tests_for_naturales():
@@ -324,3 +323,4 @@ def tests_for_naturales():
 
 
 tests_for_naturales()
+
