@@ -155,21 +155,35 @@ class Natural:
 
 #9. Вычитание из натурального, умноженного на цифру для случая с неотрицательном результатом
     def SUB_NDN_N(self, other, digit):
-        return self.SUB_NN_N(other.MUL_ND_N(digit))
+        # Вычисляем other * digit
+        product = other.MUL_ND_N(digit)
+        
+        # Проверяем, что self >= product с помощью COM_NN_D
+        comparison = self.COM_NN_D(product)
+        if comparison == 1:  # если self < product
+            raise ValueError("Результат вычитания должен быть неотрицательным")
+        
+        # Выполняем вычитание
+        return self.SUB_NN_N(product)
 
 #10. Вычисление первой цифры деления большего натурального на меньшее,домноженное на 10^k,где k - номер позиции этой цифры (номер считается с нуля)
     def DIV_NN_Dk(self, other, k):
-        #проверка: делимое должно быть >= делителя
+        # Проверка: делимое должно быть >= делителя
         if self.COM_NN_D(other) == 1:
             raise ValueError('Нельзя делить меньшее число на большее!')
 
-        divisior = other.MUL_Nk_N(k) #умножаем на 10^k(сдвигаем на k разрядов влево)
-
-        for i in range(1, 10):
-            #умножаем сдвинутый делитель на текущую цифру и сравниваем произведение с делимым
-            if divisior.MUL_ND_N(i).COM_NN_D(self) == 2: #если произведение стало больше делимого
-                return i - 1 #возвращаем предыдущую цифру
-        return 9
+        # Домножаем делитель на 10^k
+        divisor_shifted = other.MUL_Nk_N(k)
+        
+        # Находим максимальную цифру d (0-9), такую что divisor_shifted * d <= self
+        digit = 0
+        for d in range(1, 10):
+            product = divisor_shifted.MUL_ND_N(d)
+            if product.COM_NN_D(self) != 2:  # если product <= self
+                digit = d
+            else:
+                break
+        return digit
 
  #11. Неполное частное от деления первого натурального числа на второе с остатком (делитель отличен от нуля)
     def DIV_NN_N(self, other):
@@ -182,25 +196,59 @@ class Natural:
         if comparison == 0:  # если числа равны
             return Natural('1')
 
-        quotient = Natural('0')
-        remainder = Natural(str(self))
-
-        while remainder.COM_NN_D(other) != 1:  # пока remainder >= other
-            remainder = remainder.SUB_NN_N(other)
-            quotient = quotient.ADD_1N_N()
-
-        return quotient
+        # Определяем количество разрядов в частном
+        n = len(self.num)
+        m = len(other.num)
+        k = n - m  # максимальная степень для DIV_NN_Dk
+        
+        result_digits = []
+        current_dividend = Natural(str(self))
+        
+        # Обрабатываем каждый разряд частного от старшего к младшему
+        for i in range(k, -1, -1):
+            # Находим цифру для текущего разряда
+            digit = current_dividend.DIV_NN_Dk(other, i)
+            result_digits.append(digit)
+            
+            # Вычитаем из текущего делимого other * digit * 10^i
+            if digit > 0:
+                temp = other.MUL_ND_N(digit)
+                temp = temp.MUL_Nk_N(i)
+                current_dividend = current_dividend.SUB_NDN_N(temp, 1)
+        
+        # Создаем результат, убирая ведущие нули
+        result_str = ''.join(map(str, result_digits))
+        result = Natural(result_str)
+        
+        # Убираем возможные ведущие нули
+        while len(result.num) > 1 and result.num[0] == 0:
+            result.num = result.num[1:]
+            
+        return result
 
 #12. Остаток от деления первого натурального числа на второе натуральное (делитель отличен от нуля)
     def MOD_NN_N(self, other):
-        if self.COM_NN_D(other) == 1:  #если делимое меньше делителя
-            return Natural(str(self))
+        if other.COM_NN_D(Natural('0')) == 0:
+            raise ValueError('Деление на ноль невозможно!')
 
-        remainder = Natural(str(self))
-
-        while remainder.COM_NN_D(other) != 1:  #пока remainder >= other
-            remainder = remainder.SUB_NN_N(other)
-
+        # Вычисляем частное
+        quotient = self.DIV_NN_N(other)
+        
+        # Вычисляем произведение quotient * other
+        product = Natural('0')
+        quotient_str = str(quotient)
+        
+        # Используем SUB_NDN_N для вычисления product = quotient * other
+        for i, digit_char in enumerate(quotient_str):
+            digit = int(digit_char)
+            if digit > 0:
+                temp = other.MUL_ND_N(digit)
+                temp = temp.MUL_Nk_N(len(quotient_str) - i - 1)
+                product = product.ADD_NN_N(temp)
+        
+        # Вычисляем остаток: self - product
+        remainder = self.SUB_NDN_N(product, 1)
+        
         return remainder
 
 #13. НОД наутральных чисел
@@ -208,19 +256,22 @@ class Natural:
         a = Natural(str(self))
         b = Natural(str(other))
 
-        # Проверка на нули
-        if a.NZER_N_B() == "нет":  
+        # Проверка на нули с использованием NZER_N_B
+        if a.NZER_N_B() == "нет":
             return b
-        if b.NZER_N_B() == "нет":  
+        if b.NZER_N_B() == "нет":
             return a
 
-        while b.NZER_N_B() == "да":
-            temp = a.MOD_NN_N(b)
-            a = b
-            b = temp
-            # Защита от бесконечного цикла
-            if len(str(a)) > 100 or len(str(b)) > 100:  # если числа стали слишком большими
-                break
+
+        while b.NZER_N_B() == "да": # используем алгоритм Евклида
+            comparison = a.COM_NN_D(b) # сравниваем числа с помощью COM_NN_D
+            if comparison == 1:  # a < b
+                a, b = b, a  # меняем местами
+            elif comparison == 0:  # a == b
+                return a
+
+            temp = a.MOD_NN_N(b) # вычисляем остаток
+            a, b = b, temp
 
         return a
 
@@ -300,8 +351,8 @@ def tests_for_naturales():
 
     # Тест 10: DIV_NN_Dk - нахождение цифры частного
     print("\n10. ТЕСТИРОВАНИЕ НАХОЖДЕНИЯ ЦИФРЫ ЧАСТНОГО (DIV_NN_Dk):")
-    print(f"   Цифра частного для {num3} / {num2} с k=2: {num3.DIV_NN_Dk(num2, 2)}")
-    print(f"   Цифра частного для {num4} / {num1} с k=0: {num4.DIV_NN_Dk(num1, 0)}")
+    print(f"   {num4} / {num6}, цифра на позиции 0: {num4.DIV_NN_Dk(num6, 0)}")  
+    print(f"   {num3} / {num4}, цифра на позиции 0: {num3.DIV_NN_Dk(num4, 0)}")  
 
     # Тест 11: DIV_NN_N - деление чисел
     print("\n11. ТЕСТИРОВАНИЕ ДЕЛЕНИЯ ЧИСЕЛ (DIV_NN_N):")
