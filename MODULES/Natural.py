@@ -153,7 +153,6 @@ class Natural:
 
     #9. Вычитание из натурального, умноженного на цифру для случая с неотрицательным результатом
     def SUB_NDN_N(self, other, digit):
-<<<<<<< HEAD
         # Вычисляем other * digit
         product = other.MUL_ND_N(digit)
         
@@ -164,14 +163,12 @@ class Natural:
         
         # Выполняем вычитание
         return self.SUB_NN_N(product)
-=======
         compare = self.COM_NN_D(other.MUL_ND_N(digit))
 
         if compare == 1: # если первое число оказалось меньше второго, умноженного на цифру, выбрасывает ошибку
             raise ValueError("Первое число должно быть больше или равно второму, умноженному на цифру")
         elif compare == 0 or compare == 2: # иначе возвращаем результат вычитания
             return self.SUB_NN_N(other.MUL_ND_N(digit))
->>>>>>> 7d44cdd291394c24743d7c872d2d762df11e3430
 
     #10. Вычисление первой цифры деления большего натурального на меньшее, домноженное на 10^k, где k - номер позиции этой цифры (номер считается с нуля)
     def DIV_NN_Dk(self, other, k):
