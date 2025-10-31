@@ -192,75 +192,86 @@ class Integer:
         
         return result
     
-    def DIV_ZZ_Z(self, per):
-        # Целочисленное деление
+        def DIV_ZZ_Z(self, per):
+        # Z-9: Частное от деления целого на целое (делитель отличен от нуля)
+        # Используемые функции: ABS_Z_N, POZ_Z_D, DIV_NN_N, ADD_1N_N
+
         # Проверка деления на ноль
         if per.POZ_Z_D() == 0:
-            raise ZeroDivisionError("Division by zero")
-        
+            print("Ошибка: деление на ноль!")
+            return None
+
         # Деление нуля на любое число дает ноль
         if self.POZ_Z_D() == 0:
             return Integer('0')
-        
-        # Делим модули чисел
-        abs_self = self.ABS_Z_N()
-        abs_per = per.ABS_Z_N()
-        
-        quotient_abs = Natural.DIV_NN_N(abs_self, abs_per)
+
+        # Получаем модули чисел
+        abs_self = self.ABS_Z_N()  # ABS_Z_N
+        abs_per = per.ABS_Z_N()  # ABS_Z_N
+
+        # Определяем знаки чисел
+        sign_self = self.POZ_Z_D()  # POZ_Z_D
+        sign_per = per.POZ_Z_D()  # POZ_Z_D
+
+        # Делим модули натуральных чисел
+        quotient_abs = abs_self.DIV_NN_N(abs_per)  # DIV_NN_N
         result = Integer.TRANS_N_Z(quotient_abs)
-        
+
         # Если знаки разные, результат отрицательный
-        if self.POZ_Z_D() != per.POZ_Z_D():
+        if sign_self != sign_per:
             result = result.MUL_ZM_Z()
-        
-        # Корректировка для отрицательных чисел
-        # В целочисленном делении результат должен быть таким,
+
+        # КОРРЕКТИРОВКА: для отрицательного делимого увеличиваем результат на 1
         # чтобы остаток был неотрицательным
-        if self.POZ_Z_D() == 1:
+        if sign_self == 1:  # Если делимое отрицательное
+            # Вычисляем произведение result * per
             product = result.MUL_ZZ_Z(per)
-            # Проверяем, нужно ли корректировать результат
-            if product.POZ_Z_D() != self.POZ_Z_D() or \
-            product.ABS_Z_N().COM_NN_D(abs_self) != 0:
-                
-                # Корректируем результат в меньшую сторону
+
+            # Если произведение НЕ равно делимому, нужно корректировать
+            if str(product) != str(self):
+                # Для отрицательного результата увеличиваем на 1 (делаем менее отрицательным)
                 if result.POZ_Z_D() == 1:
-                    result_nat = result.ABS_Z_N()
-                    result_plus_one = result_nat.ADD_1N_N()
-                    result = Integer.TRANS_N_Z(result_plus_one).MUL_ZM_Z()
+                    result_abs = result.ABS_Z_N()
+                    result_abs_plus_one = result_abs.ADD_1N_N()  # ADD_1N_N
+                    result = Integer.TRANS_N_Z(result_abs_plus_one).MUL_ZM_Z()
+                # Для положительного результата увеличиваем на 1
+                elif result.POZ_Z_D() == 2:
+                    result_abs = result.ABS_Z_N()
+                    result_abs_plus_one = result_abs.ADD_1N_N()  # ADD_1N_N
+                    result = Integer.TRANS_N_Z(result_abs_plus_one)
+                # Для нуля делаем -1
                 else:
-                    result_nat = result.ABS_Z_N()
-                    one_nat = Natural('1')
-                    if result_nat.COM_NN_D(one_nat) == 2:
-                        result_minus_one = result_nat.SUB_NN_N(one_nat)
-                        result = Integer.TRANS_N_Z(result_minus_one)
-                    else:
-                        result = Integer('0')
-        
+                    result = Integer('1').MUL_ZM_Z()
+
         return result
 
-    def MOD_ZZ_Z(self, per):
-        # Остаток от деления
+        def MOD_ZZ_Z(self, per):
+        # Z-10: Остаток от деления целого на целое (делитель отличен от нуля)
+        # Используемые функции: DIV_ZZ_Z, MUL_ZZ_Z, SUB_ZZ_Z, MUL_ZM_Z
+
         # Проверка деления на ноль
         if per.POZ_Z_D() == 0:
-            raise ZeroDivisionError("Division by zero")
-        
+            print("Ошибка: остаток от деления на ноль!")
+            return None
+
         # Остаток от деления нуля на любое число равен нулю
         if self.POZ_Z_D() == 0:
             return Integer('0')
-        
-        # Вычисляем остаток от деления модулей
-        abs_self = self.ABS_Z_N()
-        abs_per = per.ABS_Z_N()
-        
-        mod_abs = Natural.MOD_NN_N(abs_self, abs_per)
-        result = Integer.TRANS_N_Z(mod_abs)
-        
-        # Для отрицательного делимого корректируем остаток
-        # Остаток всегда должен быть неотрицательным
-        if self.POZ_Z_D() == 1 and result.POZ_Z_D() != 0:
-            result = Integer.TRANS_N_Z(abs_per).SUB_ZZ_Z(result)
-        
-        return result
+
+        # Вычисляем частное (целая часть от деления)
+        quotient = self.DIV_ZZ_Z(per)
+
+        # Проверяем, что деление было успешным
+        if quotient is None:
+            return None
+
+        # Вычисляем произведение частного и делителя
+        product = quotient.MUL_ZZ_Z(per)
+
+        # Вычисляем остаток: делимое - произведение
+        remainder = self.SUB_ZZ_Z(product)
+
+        return remainder
 
 
 def tests_for_integers():
