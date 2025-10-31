@@ -192,57 +192,7 @@ class Integer:
         
         return result
     
-        def DIV_ZZ_Z(self, per):
-        # Частное от деления целого на целое (делитель отличен от нуля)
-
-        # Проверка деления на ноль
-        if per.POZ_Z_D() == 0:
-            print("Ошибка: деление на ноль!")
-            return None
-
-        # Деление нуля на любое число дает ноль
-        if self.POZ_Z_D() == 0:
-            return Integer('0')
-
-        # Получаем модули чисел
-        abs_self = self.ABS_Z_N()  
-        abs_per = per.ABS_Z_N()  
-
-        # Определяем знаки чисел
-        sign_self = self.POZ_Z_D()  
-        sign_per = per.POZ_Z_D()  
-
-        # Делим модули натуральных чисел
-        quotient_abs = abs_self.DIV_NN_N(abs_per)  
-        result = Integer.TRANS_N_Z(quotient_abs)
-
-        # Если знаки разные, результат отрицательный
-        if sign_self != sign_per:
-            result = result.MUL_ZM_Z()
-
-        # КОРРЕКТИРОВКА: для отрицательного делимого увеличиваем результат на 1
-        # чтобы остаток был неотрицательным
-        if sign_self == 1:  # Если делимое отрицательное
-            # Вычисляем произведение result * per
-            product = result.MUL_ZZ_Z(per)
-
-            # Если произведение НЕ равно делимому, нужно корректировать
-            if str(product) != str(self):
-                # Для отрицательного результата увеличиваем на 1 (делаем менее отрицательным)
-                if result.POZ_Z_D() == 1:
-                    result_abs = result.ABS_Z_N()
-                    result_abs_plus_one = result_abs.ADD_1N_N() 
-                    result = Integer.TRANS_N_Z(result_abs_plus_one).MUL_ZM_Z()
-                # Для положительного результата увеличиваем на 1
-                elif result.POZ_Z_D() == 2:
-                    result_abs = result.ABS_Z_N()
-                    result_abs_plus_one = result_abs.ADD_1N_N()  
-                    result = Integer.TRANS_N_Z(result_abs_plus_one)
-                # Для нуля делаем -1
-                else:
-                    result = Integer('1').MUL_ZM_Z()
-
-        return result
+    # Тут должна быть функция DIV_ZZ_Z 
         
     def MOD_ZZ_Z(self, per):
     # Остаток от деления целого на целое (делитель отличен от нуля)
