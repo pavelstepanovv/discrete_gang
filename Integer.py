@@ -192,7 +192,51 @@ class Integer:
         
         return result
     
-    # Тут должна быть функция DIV_ZZ_Z 
+        def DIV_ZZ_Z(self, other):
+        
+        # Частное от деления целого на целое (делитель отличен от нуля)
+        
+        # Проверка деления на ноль
+        if other.POZ_Z_D() == 0:
+            raise ZeroDivisionError("Деление на ноль невозможно!")
+
+        # Если делимое равно нулю
+        if self.POZ_Z_D() == 0:
+            return Integer('0')
+
+        # Получаем модули чисел
+        abs_self = self.ABS_Z_N()
+        abs_other = other.ABS_Z_N()
+
+        # Делим модули натуральных чисел
+        abs_quotient = abs_self.DIV_NN_N(abs_other)
+
+        # Определяем знак результата
+        sign_self = self.POZ_Z_D()
+        sign_other = other.POZ_Z_D()
+
+        # Если знаки одинаковые - результат положительный, иначе отрицательный
+        if sign_self == sign_other:
+            result_sign = 0  # положительный
+        else:
+            result_sign = 1  # отрицательный
+
+        # Преобразуем натуральное частное в целое число
+        result = Integer.TRANS_N_Z(abs_quotient)
+        result.sign = result_sign
+
+        # Для математического целочисленного деления (усечение к нулю)
+        # ADD_1N_N используется только когда оба числа отрицательные и есть остаток
+        if sign_self == 1 and sign_other == 1:  # оба отрицательные
+            remainder = abs_self.MOD_NN_N(abs_other)
+            if remainder.NZER_N_B() == 'да':  # если есть остаток
+                # Для отрицательных чисел: -7 / -3 = 2 (остаток -1), но нам нужно 2
+                # Поэтому добавляем 1 только когда оба отрицательные
+                abs_result_plus_one = abs_quotient.ADD_1N_N()
+                result = Integer.TRANS_N_Z(abs_result_plus_one)
+                result.sign = 0  # положительный (так как оба отрицательные)
+
+        return result
         
     def MOD_ZZ_Z(self, per):
     # Остаток от деления целого на целое (делитель отличен от нуля)
