@@ -245,33 +245,6 @@ class Integer:
 
         return result
 
-        def MOD_ZZ_Z(self, per):
-        # Z-10: Остаток от деления целого на целое (делитель отличен от нуля)
-        # Используемые функции: DIV_ZZ_Z, MUL_ZZ_Z, SUB_ZZ_Z, MUL_ZM_Z
-
-        # Проверка деления на ноль
-        if per.POZ_Z_D() == 0:
-            print("Ошибка: остаток от деления на ноль!")
-            return None
-
-        # Остаток от деления нуля на любое число равен нулю
-        if self.POZ_Z_D() == 0:
-            return Integer('0')
-
-        # Вычисляем частное (целая часть от деления)
-        quotient = self.DIV_ZZ_Z(per)
-
-        # Проверяем, что деление было успешным
-        if quotient is None:
-            return None
-
-        # Вычисляем произведение частного и делителя
-        product = quotient.MUL_ZZ_Z(per)
-
-        # Вычисляем остаток: делимое - произведение
-        remainder = self.SUB_ZZ_Z(product)
-
-        return remainder
 
 
 def tests_for_integers():
