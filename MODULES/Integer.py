@@ -1,6 +1,6 @@
+#выполнили Кяримов А., гр. 4381 и Серженко Д., гр. 4384
+
 from Natural import Natural
-
-
 class Integer:
     def __init__(self, number: str):
         # Инициализация целого числа из строки
@@ -8,11 +8,11 @@ class Integer:
         if number[0] == '-':
             # Сохраняем цифры числа (все символы после минуса)
             self.number = list(map(int, number[1:]))
-            self.sign = 1  # 1 означает отрицательное число
+            self.sign = 1  # 1 означает "отрицательное число"
         else:
             # Сохраняем все цифры числа
             self.number = list(map(int, number[0:]))
-            self.sign = 0  # 0 означает неотрицательное число
+            self.sign = 0  # 0 означает "неотрицательное число"
         
         # Особый случай: если все цифры нули, то число неотрицательное
         if all(digit == 0 for digit in self.number):
@@ -20,7 +20,7 @@ class Integer:
     
     def __str__(self):
         # Строковое представление числа
-        # Добавляем знак минус только для отрицательных ненулевых чисел
+        # Добавляем знак "-" только для отрицательных ненулевых чисел
         if self.sign == 1 and not all(digit == 0 for digit in self.number):
             sign_prefix = '-'
         else:
@@ -28,26 +28,23 @@ class Integer:
         # Объединяем цифры в строку и добавляем знак
         number_str = ''.join(map(str, self.number))
         return sign_prefix + number_str
-    
+
+    #1. Абсолютная величина числа, результат - натуральное
     def ABS_Z_N(self):
-        # Возвращает модуль числа как натуральное число
         # Просто преобразуем цифры в натуральное число без учета знака
         return Natural(''.join(map(str, self.number)))
-    
+
+    #2. Определение положительности числа (2 - положительное, 0 — равное нулю, 1 - отрицательное)
     def POZ_Z_D(self):
-        # Определяет знак числа:
-        # 0 - если число равно нулю
-        # 1 - если число отрицательное
-        # 2 - если число положительное
         if all(digit == 0 for digit in self.number):
             return 0
         elif self.sign == 1:
             return 1
         else:
             return 2
-    
+
+    #3. Умножение целого на (-1)
     def MUL_ZM_Z(self):
-        # Умножение числа на -1 (изменение знака)
         # Ноль остается нулем при любом изменении знака
         if all(digit == 0 for digit in self.number):
             return Integer('0')
@@ -57,21 +54,21 @@ class Integer:
         return result
     
     @staticmethod
+    #4. Преобразование натурального в целое
     def TRANS_N_Z(number: Natural):
-        # Статический метод преобразования натурального числа в целое
         # Натуральное число всегда преобразуется в неотрицательное целое
         result = Integer(str(number))
         return result
-    
+
+    #5. Преобразование целого неотрицательного в натуральное
     def TRANS_Z_N(self):
-        # Преобразование целого числа в натуральное
         # Можно преобразовывать только неотрицательные числа
         if self.sign == 1:
             raise ValueError("Отрицательное число нельзя преобразовать в натуральное")
         return Natural(''.join(map(str, self.number)))
-    
+
+    #6. Сложение целых чисел
     def ADD_ZZ_Z(self, per):
-        # Сложение двух целых чисел
         # Определяем знаки обоих чисел
         sign1 = self.POZ_Z_D()
         sign2 = per.POZ_Z_D()
@@ -120,9 +117,9 @@ class Integer:
                 # Вычитаем из большего меньшее, результат положительный
                 result = per.ABS_Z_N().SUB_NN_N(self.ABS_Z_N())
                 return Integer.TRANS_N_Z(result)
-    
+
+    #7. Вычитание целых чисел
     def SUB_ZZ_Z(self, per):
-        # Вычитание целых чисел: a - b = a + (-b)
         # Если уменьшаемое равно нулю, возвращаем -b
         if self.POZ_Z_D() == 0:
             return per.MUL_ZM_Z()
@@ -171,9 +168,9 @@ class Integer:
                 return Integer.TRANS_N_Z(result)
             else:  # Модули равны
                 return Integer('0')
-    
+
+    #8.Умножение целых чисел
     def MUL_ZZ_Z(self, per):
-        # Умножение целых чисел
         # Если один из множителей ноль, результат ноль
         if self.POZ_Z_D() == 0 or per.POZ_Z_D() == 0:
             return Integer('0')
@@ -191,96 +188,72 @@ class Integer:
             result = result.MUL_ZM_Z()
         
         return result
-    
-        def DIV_ZZ_Z(self, other):
-        
-        # Частное от деления целого на целое (делитель отличен от нуля)
-        
-        # Проверка деления на ноль
+
+    #9. Частное от деления целого на целое (делитель отличен от нуля)
+    def DIV_ZZ_Z(self, other):
         if other.POZ_Z_D() == 0:
             raise ZeroDivisionError("Деление на ноль невозможно!")
-
-        # Если делимое равно нулю
+    
         if self.POZ_Z_D() == 0:
             return Integer('0')
-
-        # Получаем модули чисел
+    
         abs_self = self.ABS_Z_N()
         abs_other = other.ABS_Z_N()
-
-        # Делим модули натуральных чисел
+    
         abs_quotient = abs_self.DIV_NN_N(abs_other)
-
-        # Определяем знак результата
+    
         sign_self = self.POZ_Z_D()
         sign_other = other.POZ_Z_D()
-
-        # Если знаки одинаковые - результат положительный, иначе отрицательный
-        if sign_self == sign_other:
-            result_sign = 0  # положительный
-        else:
-            result_sign = 1  # отрицательный
-
-        # Преобразуем натуральное частное в целое число
-        result = Integer.TRANS_N_Z(abs_quotient)
-        result.sign = result_sign
-
-        # Для математического целочисленного деления (усечение к нулю)
-        # ADD_1N_N используется только когда оба числа отрицательные и есть остаток
-        if sign_self == 1 and sign_other == 1:  # оба отрицательные
-            remainder = abs_self.MOD_NN_N(abs_other)
-            if remainder.NZER_N_B() == 'да':  # если есть остаток
-                # Для отрицательных чисел: -7 / -3 = 2 (остаток -1), но нам нужно 2
-                # Поэтому добавляем 1 только когда оба отрицательные
-                abs_result_plus_one = abs_quotient.ADD_1N_N()
-                result = Integer.TRANS_N_Z(abs_result_plus_one)
-                result.sign = 0  # положительный (так как оба отрицательные)
-
-        return result
-        
-    def MOD_ZZ_Z(self, per):
-    # Остаток от деления целого на целое (делитель отличен от нуля)
-
-    # Проверка деления на ноль
-    if per.POZ_Z_D() == 0:
-        print("Ошибка: остаток от деления на ноль!")
-        return None
-
-    # Остаток от деления нуля на любое число равен нулю
-    if self.POZ_Z_D() == 0:
-        return Integer('0')
-
-    # Вычисляем частное (целая часть от деления)
-    quotient = self.DIV_ZZ_Z(per)
-
-    # Проверяем, что деление было успешным
-    if quotient is None:
-        return None
-
-    # Вычисляем произведение частного и делителя
-    product = quotient.MUL_ZZ_Z(per)
-
-    # Вычисляем остаток: делимое - произведение
-    remainder = self.SUB_ZZ_Z(product)
-
-    # Если остаток отрицательный, а делитель положительный
-    if remainder.POZ_Z_D() == 1 and per.POZ_Z_D() == 2:
-        # Получаем положительный делитель
-        abs_per = per.ABS_Z_N()
-        abs_per_int = Integer.TRANS_N_Z(abs_per)
-        remainder = remainder.ADD_ZZ_Z(abs_per_int)
     
-    # Если остаток положительный, а делитель отрицательный  
-    elif remainder.POZ_Z_D() == 2 and per.POZ_Z_D() == 1:
-        # Получаем отрицательный делитель с помощью MUL_ZM_Z
-        abs_per = per.ABS_Z_N()
-        abs_per_int = Integer.TRANS_N_Z(abs_per)
-        negative_per = abs_per_int.MUL_ZM_Z()
-        remainder = remainder.ADD_ZZ_Z(negative_per)
+        if sign_self == sign_other:
+            result_sign = 2
+        else:
+            result_sign = 1
+    
+        result = Integer(str(abs_quotient))
+        result.sign = result_sign
+    
+        # Корректировка для неотрицательного остатка
+        remainder = abs_self.MOD_NN_N(abs_other)
+        if remainder.NZER_N_B() == 'да':  # если есть остаток
+            # Увеличиваем результат когда:
+            # - оба отрицательные ИЛИ (делимое отрицательное И делитель положительное)
+            if (sign_self == 1 and sign_other == 1) or (sign_self == 1 and sign_other == 2):
+                abs_result_plus_one = abs_quotient.ADD_1N_N()
+                result = Integer(str(abs_result_plus_one))
+                result.sign = result_sign
+    
+        return result
 
-    return remainder
-
-
+    #10. Остаток от деления целого на целое(делитель отличен от нуля)
+    def MOD_ZZ_Z(self, other):
+        # Проверка деления на ноль
+        if other.POZ_Z_D() == 0:
+            raise ZeroDivisionError("Остаток от деления на ноль невозможен!")
+    
+        if self.POZ_Z_D() == 0:
+            return Integer('0')
+    
+        # Вычисляем неполное частное
+        quotient = self.DIV_ZZ_Z(other)
+        
+        # Вычисляем произведение: частное × делитель
+        product = quotient.MUL_ZZ_Z(other)
+        
+        # Вычисляем остаток: делимое - произведение
+        remainder = self.SUB_ZZ_Z(product)
+        
+        # Остаток должен быть неотрицательным и меньше модуля делителя
+        abs_other = other.ABS_Z_N()
+        abs_other_int = Integer.TRANS_N_Z(abs_other)
+        
+        if remainder.POZ_Z_D() == 1:  # если остаток отрицательный
+            remainder = remainder.ADD_ZZ_Z(abs_other_int)
+        else:  # если остаток неотрицательный
+            if remainder.COM_NN_D(abs_other) != 1:  # если остаток ≥ |делителя|
+                remainder = remainder.SUB_ZZ_Z(abs_other_int)
+        
+        return remainder
 
 def tests_for_integers():
     # Создаем тестовые данные
@@ -422,6 +395,5 @@ def tests_for_integers():
         print(f"   {int1} % {int3} = ОШИБКА - исключение не сработало!")
     except ZeroDivisionError as e:
         print(f"   {int1} % {int3} = {e}")
-
 
 tests_for_integers()
