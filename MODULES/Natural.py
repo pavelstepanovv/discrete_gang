@@ -1,4 +1,4 @@
-#выполнили Мулюкина Е.В., гр. 4384 и Экажев Р.Х., гр. 4384
+# выполнили Мулюкина Е.В., гр. 4384 и Экажев Р.Х., гр. 4384
 
 class Natural:
     def __init__(self, num: str):
@@ -9,9 +9,9 @@ class Natural:
     def __str__(self):
         return ''.join(map(str, self.num))
     
-    # 1. Сравнение натуральных чисел: 2 - если первое больше второго, 0, если равно, 1 иначе.
+    # 1. Сравнение натуральных чисел: 2 - если первое больше второго, 0, если равно, 1 иначе
     def COM_NN_D(self, other) -> int:
-    # Сравнение по длине
+        # Сравнение по длине
         if len(self.num) > len(other.num):
             return 2
         elif len(self.num) < len(other.num):
@@ -106,7 +106,7 @@ class Natural:
             result.pop()
     
         result.reverse()
-        return Natural(''.join(map(str, result)))  # возвращаем Natural
+        return Natural(''.join(map(str, result))) # возвращаем Natural
 
     # 6. Умножение натурального числа на цифру
     def MUL_ND_N(self, digit: int):
@@ -117,12 +117,14 @@ class Natural:
 
         res_digits = []
         carry = 0 #переменная для переноса
+        
         #проходим по числам исходного числа в обратном порядке
         for i in range(len(self.num) - 1, -1, -1):
             current_digit = self.num[i]
             product = current_digit * digit + carry
             res_digits.append(product % 10)
             carry = product // 10 #сохраняем старший разряд для переноса
+        
         #если перенос остался - добавляем его
         if carry > 0:
             res_digits.append(carry)
@@ -130,7 +132,8 @@ class Natural:
         res_str = ''.join(map(str, res_digits))
 
         return Natural(res_str)
-    # 7. Умножение натурального числа на 10^k, k-натуральное (не длинное)
+    
+    # 7. Умножение натурального числа на 10^k, k-натуральное (недлинное)
     def MUL_Nk_N(self, k: int):
         if k < 0:
             raise ValueError('Число k должно быть натуральным!')
@@ -146,7 +149,7 @@ class Natural:
         num_2 = other.num[::-1] # переворачиваем второе число
         for i, digit in enumerate(num_2):
             part_res = self.MUL_ND_N(digit) # умножаем первое число на цифру второго числа начиная с конца
-            shifted_res = part_res.MUL_Nk_N(i) # сдвиг числа влево на i разрядов(+i нулей)
+            shifted_res = part_res.MUL_Nk_N(i) # сдвиг числа влево на i разрядов (+i нулей)
             result = result.ADD_NN_N(shifted_res) # суммируем полученное число с результатом
 
         return result
@@ -259,8 +262,7 @@ class Natural:
             return b
         if b.NZER_N_B() == "нет":
             return a
-
-
+        
         while b.NZER_N_B() == "да": # используем алгоритм Евклида
             comparison = a.COM_NN_D(b) # сравниваем числа с помощью COM_NN_D
             if comparison == 1:  # a < b
@@ -366,8 +368,5 @@ def tests_for_naturales():
     print("\n14. ТЕСТИРОВАНИЕ НАИМЕНЬШЕГО ОБЩЕГО КРАТНОГО (LCM_NN_N):")
     print(f"   НОК({num1}, {num2}) = {num1.LCM_NN_N(num2)}")  # НОК(2, 23) = 46
     print(f"   НОК({num2}, {num4}) = {num2.LCM_NN_N(num4)}")  # НОК(23, 345) = 345
-
-
+    
 tests_for_naturales()
-
-
