@@ -250,7 +250,8 @@ class Integer:
         if remainder.POZ_Z_D() == 1:  # если остаток отрицательный
             remainder = remainder.ADD_ZZ_Z(abs_other_int)
         else:  # если остаток неотрицательный
-            if remainder.COM_NN_D(abs_other) != 1:  # если остаток ≥ |делителя|
+            remainder_natur = remainder.ABS_Z_N() # делаем remainder натуральным
+            if remainder_natur.COM_NN_D(abs_other) != 1:  # если остаток ≥ |делителя|
                 remainder = remainder.SUB_ZZ_Z(abs_other_int)
         
         return remainder
