@@ -159,7 +159,8 @@ def Rational_test():
     x = Rational('8/6')      # = 4/3 после сокращения
     y = Rational('-9/3')     # = -3 (целое!)
     z = Integer('12')
-
+    q = Rational('-9/1')
+    
     print(f'{x} = {x.RED_Q_Q()}')          # RED_Q_Q = 4/3
     print(f'{y} = {y.RED_Q_Q()}')          # RED_Q_Q = -3
 
@@ -168,7 +169,7 @@ def Rational_test():
 
     print(f'Integer({z}) → Rational({Rational.TRANS_Z_Q(z)})')  # 12 = 12/1
 
-    print(f'Rational({y}) → Integer({y.TRANS_Q_Z()})')  # -3 = -3
+    print(f'Rational({q}) → Integer({q.TRANS_Q_Z()})')  # -9 = -9
 
     a = Rational('1/2')
     b = Rational('1/3')
