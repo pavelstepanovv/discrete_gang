@@ -12,8 +12,15 @@ class Polynomial:
         self._remove_leading_zeros()
 
     def _remove_leading_zeros(self):
-        while len(self.coefficients) > 1 and self.coefficients[-1].numerator.POZ_Z_D() == 0:
-            self.coefficients = self.coefficients[:-1]
+        while len(self.coefficients) > 1 and self.coefficients[-1].is_zero():
+            self.coefficients.pop()
+    
+    def _poly_clone(self):
+        """Создать независимую копию полинома self."""
+        p = Polynomial('0')
+        p.coefficients = [Rational(str(c)) for c in self.coefficients]
+        p._remove_leading_zeros()
+        return p
 
     def __str__(self):
         terms = []
@@ -105,100 +112,103 @@ class Polynomial:
 
     # P-7: Вынесение из многочлена НОК знаменателей коэффициентов и НОД числителей
     def FAC_P_Q(self):
-        """Вынесение из многочлена НОК знаменателей коэффициентов и НОД числителей"""
-        numerators = [coef.numerator.ABS_Z_N() for coef in self.coefficients if coef.numerator.POZ_Z_D()]
-        denominators = [coef.denominator for coef in self.coefficients if coef.numerator.POZ_Z_D()]
-        if len(numerators) == 0: return Rational('1/1')
+        """Вынесение из многочлена НОК знаменателей и НОД числителей"""
+        # Отфильтруем нулевые коэффициенты
+        valid_coefs = [coef for coef in self.coefficients if coef.numerator.POZ_Z_D() != 0]
+        if not valid_coefs:
+            return Rational('1/1')
 
-        for i in range(1,len(numerators)):
-            for j in range(len(numerators) - i):
-                numerators[j] = numerators[j].GCF_NN_N(numerators[j + 1])
-                denominators[j] = denominators[j].LCM_NN_N(denominators[j + 1])
-        return Rational(f'{numerators[0]}/{denominators[0]}')
+        #Получаем натуральные числители и знаменатели
+        numerators_N = [Integer(str(coef.numerator.ABS_Z_N())).TRANS_Z_N() for coef in valid_coefs]
+        denominators_N = [coef.denominator for coef in valid_coefs]
+
+        #Находим НОД числителей
+        gcd_num = numerators_N[0]
+        for i in range(1, len(numerators_N)):
+            gcd_num = gcd_num.GCF_NN_N(numerators_N[i])
+
+        #Находим НОК знаменателей
+        lcm_den = denominators_N[0]
+        for i in range(1, len(denominators_N)):
+            lcm_den = lcm_den.LCM_NN_N(denominators_N[i])
+
+        #Преобразуем обратно: НОД -> целое, НОК -> целое
+        gcd_num_Z = Integer.TRANS_N_Z(gcd_num)
+        lcm_den_Z = Integer.TRANS_N_Z(lcm_den)
+
+        remainder_N = gcd_num.MOD_NN_N(lcm_den)
+        # Это даст целую часть деления, если g < l — результат будет 0
+        quotient_Z = gcd_num_Z.DIV_ZZ_Z(lcm_den_Z)
+        if remainder_N.NZER_N_B() == 'да':  # остаток != 0
+            # возвращаем честное рациональное число gcd_num / lcm_den
+            return Rational(f"{gcd_num_Z}/{lcm_den_Z}")
+        else:
+            # делится нацело, возвращаем целое, приведённое к рациональному виду
+            return Rational(f"{quotient_Z}/1")
 
     # P-8: Умножение многочленов
-    def MUL_PP_P(self, other : Polynomial) -> Polynomial:
-        """Умножение многочленов"""
-        n = len(self.coefficients)
-        m = len(other.coefficients)
-        result = [Rational('0') for _ in range(n + m - 1)]
-        for i in range(n):
-            for j in range(m):
-                result[i + j] = Rational.ADD_QQ_Q(result[i + j],Rational.MUL_QQ_Q(self.coefficients[i], other.coefficients[j]))
-        new_poly = Polynomial(" ".join(str(c) for c in result))
-        return new_poly
+    def MUL_PP_P(self, other: Polynomial) -> Polynomial:
+        """P-8: Умножение многочленов"""
+        # Инициализируем нулевой многочлен
+        result_poly = Polynomial('0')
+        # Степень второго многочлена
+        deg_Q = int(str(other.DEG_P_N()))
+        for i in range(deg_Q + 1):
+            # Текущий коэффициент из второго многочлена
+            coef_i = other.coefficients[i]
+            # (1) Умножаем первый многочлен на этот коэффициент (рациональное число)
+            temp_poly = self.MUL_PQ_P(coef_i)
+            # (2) Умножаем на x^i
+            temp_poly = temp_poly.MUL_Pxk_P(Natural(str(i)))
+            # (3) Добавляем к общему результату
+            result_poly = result_poly.ADD_PP_P(temp_poly)
+
+        return result_poly
 
     # P-9: Частное от деления многочлена на многочлен при делении с остатком
-    def DIV_PP_P(self, other : Polynomial) -> Polynomial:
-        """Частное от деления многочлена на многочлен при делении с остатком"""
-        dividend = self.coefficients.copy()
-        divisor = other.coefficients.copy()
+    def DIV_PP_P(self, other: Polynomial) -> Polynomial:
+        """Частное от деления многочлена на многочлен"""
+        if other.is_zero():
+            raise ZeroDivisionError("Деление на нулевой многочлен")
 
-        if len(dividend) < len(divisor):
-            return Polynomial("0")
+        A = self._poly_clone()
+        B = other._poly_clone()
+        Q = Polynomial('0')
 
-        quotient = [Rational('0') for _ in range(len(dividend) - len(divisor) + 1)]
+        while not A.is_zero() and A.DEG_P_N().COM_NN_D(B.DEG_P_N()) != 1:  # deg(A) >= deg(B)
+            deg_diff = int(str(A.DEG_P_N().SUB_NN_N(B.DEG_P_N())))
+            lead_A = A.coefficients[-1]
+            lead_B = B.coefficients[-1]
+            q = Rational.DIV_QQ_Q(lead_A, lead_B)
 
-        while len(dividend) >= len(divisor):
-            deg_diff = len(dividend) - len(divisor)
-            lead_dividend = dividend[-1]
-            lead_divisor = divisor[-1]
-            q = Rational.DIV_QQ_Q(lead_dividend, lead_divisor)
-            quotient[deg_diff] = q
+            term = Polynomial(str(q)).MUL_Pxk_P(Natural(str(deg_diff)))
+            Q = Q.ADD_PP_P(term)
+            A = A.SUB_PP_P(B.MUL_PP_P(term))
+            A._remove_leading_zeros()
 
-            for i in range(len(divisor)):
-                pos = i + deg_diff
-                prod = Rational.MUL_QQ_Q(divisor[i], q)
-                dividend[pos] = Rational.SUB_QQ_Q(dividend[pos], prod)
+        return Q
+        
+    def MOD_PP_P(self, other: Polynomial) -> Polynomial:
+        """P-10: Остаток от деления многочлена на многочлен при делении с остатком."""
 
-            while len(dividend) > 1 and dividend[-1].numerator.POZ_Z_D() == 0:
-                dividend.pop()
+        # Проверка делителя на ноль
+        if other.is_zero():
+            raise ZeroDivisionError("Деление на нулевой многочлен")
 
-            if len(dividend) < len(divisor):
-                break
+        # Если делимое меньше делителя — остаток = делимое
+        if self.DEG_P_N().COM_NN_D(other.DEG_P_N()) == 1:  # self < other
+            return self._poly_clone()
 
-        return Polynomial(" ".join(str(c) for c in quotient))
-    
-    # P-10: Остаток от деления многочлена на многочлен при делении с остатком
-    def MOD_PP_P(self, other):
-        """Остаток от деления многочлена на многочлен."""
-        dividend = self.coefficients.copy()
-        divisor = other.coefficients.copy()
+        # Получаем частное
+        quotient = self.DIV_PP_P(other)
 
-        # Если степень делимого меньше делителя
-        if len(dividend) < len(divisor):
-            result = Polynomial('0')
-            result.coefficients = dividend
-            result._remove_leading_zeros()
-            return result
+        # Вычисляем остаток: remainder = self - (other * quotient)
+        remainder = self.SUB_PP_P(other.MUL_PP_P(quotient))
 
-        # Основной цикл деления
-        while len(dividend) >= len(divisor):
-            deg_diff = len(dividend) - len(divisor)
-            lead_dividend = dividend[-1]
-            lead_divisor = divisor[-1]
-
-            # Частное от деления старших коэффициентов
-            q = Rational.DIV_QQ_Q(lead_dividend, lead_divisor)
-
-            # Вычитаем q * (divisor * x^deg_diff) из dividend
-            for i in range(len(divisor)):
-                pos = i + deg_diff
-                prod = Rational.MUL_QQ_Q(divisor[i], q)
-                dividend[pos] = Rational.SUB_QQ_Q(dividend[pos], prod)
-
-            # Удаляем "нулевые" коэффициенты с конца (с нормализацией)
-            while len(dividend) > 0 and dividend[-1].is_zero():
-                dividend.pop()
-
-            if len(dividend) < len(divisor):
-                break
-
-        # Создаём результат
-        remainder = Polynomial('0')
-        remainder.coefficients = dividend if dividend else [Rational('0')]
         remainder._remove_leading_zeros()
+
         return remainder
+
 
     def is_zero(self):
         self._remove_leading_zeros()
