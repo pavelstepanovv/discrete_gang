@@ -5,7 +5,6 @@ from Integer import Integer
 from Natural import Natural
 
 
-
 class Polynomial:
     def __init__(self, polynomial: str):
         self.numbers = polynomial.split()
@@ -51,8 +50,6 @@ class Polynomial:
 
         return " + ".join(terms).replace(" + -", " - ") 
 
-
-
     # P-1: Сложение многочленов
     def ADD_PP_P(self, other):
         max_len = max(len(self.coefficients), len(other.coefficients))
@@ -92,6 +89,7 @@ class Polynomial:
         result_poly.coefficients = new_coeffs
         result_poly._remove_leading_zeros()
         return result_poly
+        
     # P-5:Старший коэффициент многочлена
     def LED_P_Q(self):
         if not self.coefficients:
@@ -188,6 +186,7 @@ class Polynomial:
             A._remove_leading_zeros()
 
         return Q
+
     # P-10: Остаток от деления многочлена на многочлен при делении с остатком.    
     def MOD_PP_P(self, other: Polynomial) -> Polynomial:
 
@@ -252,8 +251,6 @@ class Polynomial:
         result_poly.coefficients = normalized_coeffs
         result_poly._remove_leading_zeros()
         return result_poly
-
-
 
     # P-12: Производная многочлена
     def DER_P_P(self):
