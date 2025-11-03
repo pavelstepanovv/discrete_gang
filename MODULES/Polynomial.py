@@ -1,7 +1,8 @@
+#выполнили Мазеев В., гр. 4384, Калинина А., гр. 4384 и Дровнев Д., гр. 4384
 from __future__ import annotations
-from MODULES.Rational import Rational
-from MODULES.Integer import Integer
-from MODULES.Natural import Natural
+from Rational import Rational
+from Integer import Integer
+from Natural import Natural
 
 
 
@@ -187,9 +188,8 @@ class Polynomial:
             A._remove_leading_zeros()
 
         return Q
-        
+    # P-10: Остаток от деления многочлена на многочлен при делении с остатком.    
     def MOD_PP_P(self, other: Polynomial) -> Polynomial:
-        """P-10: Остаток от деления многочлена на многочлен при делении с остатком."""
 
         # Проверка делителя на ноль
         if other.is_zero():
@@ -213,8 +213,8 @@ class Polynomial:
     def is_zero(self):
         self._remove_leading_zeros()
         return all(c.is_zero() for c in self.coefficients)
+        
     # P-11: НОД многочленов
-    # НОД многочленов
     def GCF_PP_P(self, other):
         # Создаем копии
         a = Polynomial('0')
