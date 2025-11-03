@@ -1,4 +1,4 @@
-#модуль подготовили Сморыго Юлия и Зайченко Екатерина
+# выполнили Сморыго Ю., гр. 4384 и Зайченко Е., гр. 4384
 
 from Natural import Natural
 from Integer import Integer
@@ -12,9 +12,9 @@ class Rational:
     '''
 
     def __init__(self, number: str):
-        s = number.replace('|', '/').replace(':', '/') #единое оформление числа
+        s = number.replace('|', '/').replace(':', '/') # единое оформление числа
 
-        #приведение к единому разделителю
+        # приведение к единому разделителю
         if '/' in s:
             num_str, den_str = s.split('/', 1)
         else:
@@ -22,50 +22,52 @@ class Rational:
 
         self.numerator = Integer(num_str)
 
-        if self.numerator.POZ_Z_D() != 0:  #если числитель не равен 0, оставляем знаменатель
+        if self.numerator.POZ_Z_D() != 0:  # если числитель не равен 0, оставляем знаменатель
             self.denominator = Natural(den_str)
-        else:                               #если числитель равен 0, приравниваем знаменатель к 1
+        else:                               # если числитель равен 0, приравниваем знаменатель к 1
             self.denominator = Natural('1')
 
-    #представление числа в виде строки
+    # представление числа в виде строки
     def __str__(self):
         if Natural.COM_NN_D(self.denominator, Natural('1')) == 0:
             return str(self.numerator)
         return f'{self.numerator}/{self.denominator}'
+        
+    def is_zero(self):
+        return self.numerator.POZ_Z_D() == 0
 
-
-    #1 Сокращение дроби
+    #1. Сокращение дроби
     def RED_Q_Q(self):
-        if self.numerator.POZ_Z_D() == 0: #если числитель равен нулю - всё число равно нулю
+        if self.numerator.POZ_Z_D() == 0: # если числитель равен нулю - всё число равно нулю
             return Rational('0')
-        abs_num = self.numerator.ABS_Z_N() #модуль числителя
-        nod = self.denominator.GCF_NN_N(abs_num) #НОД натурального! числителя и знаменателя
+        abs_num = self.numerator.ABS_Z_N() # модуль числителя
+        nod = self.denominator.GCF_NN_N(abs_num) # НОД натурального(!) числителя и знаменателя
 
-        #новый числитель - целое число
+        # новый числитель - целое число
         new_num = self.numerator.DIV_ZZ_Z(Integer.TRANS_N_Z(nod))
-        #новый знаменатель - натуральное число
+        # новый знаменатель - натуральное число
         new_den = self.denominator.DIV_NN_N(nod)
 
         return Rational(f'{new_num}/{new_den}')
 
-    # 2 Проверка сокращенного дробного на целое, если рациональное число является целым, то «да», иначе «нет»
+    #2. Проверка сокращенного дробного на целое, если рациональное число является целым, то «да», иначе «нет»
     def INT_Q_B(self):
         # Находим НОД модуля числителя и знаменателя
         p = self.denominator.GCF_NN_N(self.numerator.ABS_Z_N())
 
-        #Число целое, если числитель равен нулю
+        # Число целое, если числитель равен нулю
         # или если знаменатель и НОД равны (знаменатель полностью делится на числитель)
         if self.numerator.POZ_Z_D() == 0 or self.denominator.COM_NN_D(p) == 0:
             return 'да'
         else:
             return 'нет'
 
-    #3 Преобразование целого в дробное
+    #3. Преобразование целого в дробное
     @staticmethod
     def TRANS_Z_Q(number: Integer):
         return Rational(f'{number}/1')
 
-    # 4 Преобразование сокращенного дробного в целое (если знаменатель равен 1)
+    #4. Преобразование сокращенного дробного в целое (если знаменатель равен 1)
     def TRANS_Q_Z(self):
         # Проверяем, равен ли знаменатель 1
         if Natural.COM_NN_D(self.denominator, Natural('1')) == 0:
@@ -75,28 +77,28 @@ class Rational:
             # Если знаменатель не равен 1 — преобразование невозможно
             raise ValueError("Невозможно преобразовать: знаменатель не равен 1")
 
-    #5 Сложение дробей
+    #5. Сложение дробей
     def ADD_QQ_Q(self, other):
 
-        nok = self.denominator.LCM_NN_N(other.denominator) #нок знаменателей двух дробей
+        nok = self.denominator.LCM_NN_N(other.denominator) # НОК знаменателей двух дробей
 
-        #значение на которое нужно домножить числитель
+        # значение на которое нужно домножить числитель
         val1 = nok.DIV_NN_N(self.denominator)
         val2 = nok.DIV_NN_N(other.denominator)
 
-        #новый числитель - целое число = числитель изначальной дроби умножить на val1/val2
+        # новый числитель - целое число = числитель изначальной дроби умножить на val1/val2
         num1 = Integer.MUL_ZZ_Z(self.numerator, Integer.TRANS_N_Z(val1))
         num2 = Integer.MUL_ZZ_Z(other.numerator, Integer.TRANS_N_Z(val2))
 
         new_numerator = Integer.ADD_ZZ_Z(num1, num2)
 
-        #новый знаменатель = нок
+        # новый знаменатель = нок
         result = Rational(f'{new_numerator}/{nok}')
 
-        #сокращение полученной дроби
+        # сокращение полученной дроби
         return result.RED_Q_Q()
 
-    # 6 Вычитание дробей
+    #6. Вычитание дробей
     def SUB_QQ_Q(self, other):
 
        # Находим НОК знаменателей (используем LCM_NN_N из модуля Natural)
@@ -118,10 +120,10 @@ class Rational:
         # Возвращаем новую рациональную дробь
         return Rational(f'{new_num}/{new_den}')
 
-    #7 Умножение дробей
+    #7. Умножение дробей
     def MUL_QQ_Q(self, other):
 
-        #получение нового числителя и знаменателя
+        # получение нового числителя и знаменателя
         num = Integer.MUL_ZZ_Z(self.numerator, other.numerator)
         det = Natural.MUL_NN_N(self.denominator, other.denominator)
 
@@ -130,7 +132,7 @@ class Rational:
         # сокращение полученной дроби
         return result.RED_Q_Q()
 
-    # 8 Деление дробей (делитель отличен от нуля)
+    #8. Деление дробей (делитель отличен от нуля)
     def DIV_QQ_Q(self, other):
         # Проверяем, что делитель не равен нулю
         if other.numerator.POZ_Z_D() == 0:
