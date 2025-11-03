@@ -171,7 +171,7 @@ class Natural:
     def DIV_NN_Dk(self, other, k):
         # Проверка: делимое должно быть >= делителя
         if self.COM_NN_D(other) == 1:
-            raise ValueError('Нельзя делить меньшее число на большее!')
+            return 0
 
         # Домножаем делитель на 10^k
         divisor_shifted = other.MUL_Nk_N(k)
@@ -370,3 +370,4 @@ def tests_for_naturales():
     print(f"   НОК({num2}, {num4}) = {num2.LCM_NN_N(num4)}")  # НОК(23, 345) = 345
     
 tests_for_naturales()
+
