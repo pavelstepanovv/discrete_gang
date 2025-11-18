@@ -17,21 +17,25 @@ class PolynomialApp:
 
         self.root = root
         self.root.title("😎 Калькулятор многочленов Миньоны")
-        self.root.geometry("550x650")  # Увеличил размер окна
+        self.root.geometry("650x680")  # Немного увеличил для большего текста
         self.root.configure(bg=self.bg_color)
         self.root.attributes('-alpha', 0.97)
+
+        # Создаем основной фрейм с прокруткой
+        main_frame = tk.Frame(root, bg=self.bg_color)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
 
         self.method_var = tk.StringVar(value="Сложение многочленов")
 
         # Заголовок
-        title_label = tk.Label(root, text="😎 Калькулятор многочленов", 
+        title_label = tk.Label(main_frame, text="😎 Калькулятор многочленов", 
                               bg=self.bg_color, fg=self.text_color, font=("Arial", 16, "bold"))
-        title_label.pack(pady=15)
+        title_label.pack(pady=10)
 
         # Подзаголовок
-        subtitle_label = tk.Label(root, text="Ба-на-на! Математика с миньонами! 🍌", 
-                                 bg=self.bg_color, fg=self.backlight, font=("Arial", 11, "italic"))
-        subtitle_label.pack(pady=5)
+        subtitle_label = tk.Label(main_frame, text="Ба-на-на! Математика с миньонами! 🍌", 
+                                 bg=self.bg_color, fg=self.backlight, font=("Arial", 12, "italic"))
+        subtitle_label.pack(pady=2)
 
         # Выбор метода
         methods = [
@@ -50,8 +54,8 @@ class PolynomialApp:
             "Кратные корни в простые"
         ]
 
-        method_frame = tk.Frame(root, bg=self.bg_color)
-        method_frame.pack(pady=15)
+        method_frame = tk.Frame(main_frame, bg=self.bg_color)
+        method_frame.pack(pady=10)
 
         tk.Label(method_frame, text="Выберите задание:", bg=self.bg_color, fg=self.text_color, 
                 font=("Arial", 11)).pack(side=tk.LEFT)
@@ -59,84 +63,143 @@ class PolynomialApp:
         self.method_menu = tk.OptionMenu(method_frame, self.method_var, *methods, command=self.on_option_change)
         self.method_menu.config(bg=self.window_color, fg="white",
                                activebackground=self.hover_color, activeforeground="white",
-                               font=("Arial", 10), width=22, relief=tk.RAISED, bd=2)
+                               font=("Arial", 10), width=20, relief=tk.RAISED, bd=2)
         self.method_menu["menu"].config(bg=self.window_color, fg="white")
-        self.method_menu.pack(side=tk.LEFT, padx=10)
+        self.method_menu.pack(side=tk.LEFT, padx=8)
 
         # Контейнер для полей ввода
-        self.input_frame = tk.Frame(root, bg=self.bg_color)
-        self.input_frame.pack(pady=15)
+        self.input_frame = tk.Frame(main_frame, bg=self.bg_color)
+        self.input_frame.pack(pady=10, fill=tk.X)
 
         # Первый многочлен (всегда видно)
         self.first_poly_label = tk.Label(self.input_frame, text="😎 Первый многочлен:", bg=self.bg_color, 
-                                        fg=self.text_color, font=("Arial", 10, "bold"))
-        self.first_poly_label.grid(row=0, column=0, sticky="w", pady=5)
+                                        fg=self.text_color, font=("Arial", 11, "bold"))
+        self.first_poly_label.grid(row=0, column=0, sticky="w", pady=3)
         
-        self.first_poly_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=30, 
+        self.first_poly_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=35, 
                                        font=("Arial", 11), relief=tk.SUNKEN, bd=2)
-        self.first_poly_entry.grid(row=1, column=0, pady=5)
+        self.first_poly_entry.grid(row=1, column=0, pady=3, columnspan=2, sticky="ew")
 
         # Второй многочлен (изначально скрыто)
         self.second_poly_label = tk.Label(self.input_frame, text="🤓 Второй многочлен:", bg=self.bg_color, 
-                                         fg=self.text_color, font=("Arial", 10))
-        self.second_poly_label.grid(row=0, column=1, sticky="w", pady=5, padx=(20, 0))
+                                         fg=self.text_color, font=("Arial", 11))
+        self.second_poly_label.grid(row=2, column=0, sticky="w", pady=(8, 3))
         
-        self.second_poly_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=30, 
+        self.second_poly_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=35, 
                                         font=("Arial", 11), relief=tk.SUNKEN, bd=2)
-        self.second_poly_entry.grid(row=1, column=1, pady=5, padx=(20, 0))
+        self.second_poly_entry.grid(row=3, column=0, pady=3, columnspan=2, sticky="ew")
 
         # Рациональное число (специальное поле)
         self.rational_label = tk.Label(self.input_frame, text="🍌 Рациональное число:", bg=self.bg_color, 
-                                      fg=self.text_color, font=("Arial", 10))
-        self.rational_label.grid(row=2, column=0, sticky="w", pady=(15, 5))
+                                      fg=self.text_color, font=("Arial", 11))
+        self.rational_label.grid(row=4, column=0, sticky="w", pady=(8, 3))
         
-        self.rational_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=25, 
+        self.rational_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=20, 
                                      font=("Arial", 11), relief=tk.SUNKEN, bd=2)
-        self.rational_entry.grid(row=3, column=0, pady=5)
+        self.rational_entry.grid(row=5, column=0, pady=3, sticky="w")
 
         # Степень k (специальное поле)
         self.k_label = tk.Label(self.input_frame, text="👓 Степень k:", bg=self.bg_color, 
-                               fg=self.text_color, font=("Arial", 10))
-        self.k_label.grid(row=2, column=1, sticky="w", pady=(15, 5), padx=(20, 0))
+                               fg=self.text_color, font=("Arial", 11))
+        self.k_label.grid(row=4, column=1, sticky="w", pady=(8, 3))
         
-        self.k_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=15, 
+        self.k_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=12, 
                               font=("Arial", 11), relief=tk.SUNKEN, bd=2)
-        self.k_entry.grid(row=3, column=1, pady=5, padx=(20, 0))
+        self.k_entry.grid(row=5, column=1, pady=3, sticky="w")
 
-        # Подсказка для формата ввода
-        hint_label = tk.Label(self.input_frame, text="Формат: коэффициенты через пробел (например: 1 2 -3 4)", 
-                             bg=self.bg_color, fg=self.backlight, font=("Arial", 9, "italic"))
-        hint_label.grid(row=4, column=0, columnspan=2, pady=(10, 0))
+        # Подсказка для формата ввода (ОБНОВЛЕНА)
+        hint_label = tk.Label(self.input_frame, 
+                             text="Формат: 2*x^3 + 3*x^2 - x + 5  или  x^2 + 1  или  1/2*x^4 - 1/3*x^2 + 2", 
+                             bg=self.bg_color, fg=self.backlight, font=("Arial", 9, "italic"),
+                             wraplength=500)
+        hint_label.grid(row=6, column=0, columnspan=2, pady=(8, 3))
+
+        # Примеры ввода
+        examples_label = tk.Label(self.input_frame, 
+                                text="Примеры: '2*x^3 + x - 5', '1/2*x^2 + 3*x', '5' (константа), '0' (нулевой)",
+                                bg=self.bg_color, fg=self.text_color, font=("Arial", 8),
+                                wraplength=500)
+        examples_label.grid(row=7, column=0, columnspan=2, pady=(2, 5))
+
+        # Настройка весов колонок для правильного растягивания
+        self.input_frame.columnconfigure(0, weight=1)
+        self.input_frame.columnconfigure(1, weight=1)
 
         # Изначально скрываем ненужные поля
         self.hide_all_extra_fields()
 
-        # Метка для результата с увеличенной высотой
-        result_frame = tk.Frame(root, bg=self.window_color, bd=3, relief=tk.GROOVE)
-        result_frame.pack(pady=20, padx=25, fill=tk.X)
+        # Метка для результата с увеличенным шрифтом
+        result_frame = tk.Frame(main_frame, bg=self.window_color, bd=2, relief=tk.GROOVE)
+        result_frame.pack(pady=10, fill=tk.X)
         
         result_title = tk.Label(result_frame, text="🎯 Результат:", bg=self.window_color, fg="white", 
-                               font=("Arial", 11, "bold"))
-        result_title.pack(pady=(8, 0))
+                               font=("Arial", 12, "bold"))
+        result_title.pack(pady=(5, 0))
         
         self.result_label = tk.Label(result_frame, text="Банана! Здесь появится результат...", 
-                                    bg="white", fg="black", font=("Arial", 11),  # Уменьшил шрифт
-                                    wraplength=500, justify=tk.CENTER, height=6)  # Увеличил высоту и ширину
-        self.result_label.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+                                    bg="white", fg="black", font=("Arial", 11),  # Увеличил шрифт
+                                    wraplength=580, justify=tk.LEFT, height=6)  # Увеличил высоту и ширину
+        self.result_label.pack(pady=5, padx=5, fill=tk.BOTH, expand=True)
 
-        # Кнопка выполнения
-        self.calculate_button = tk.Button(root, text="🚀 Выполнить!", command=self.calculate, 
+        # Кнопка выполнения (теперь в основном фрейме)
+        self.calculate_button = tk.Button(main_frame, text="🚀 Выполнить!", command=self.calculate, 
                                          bg=self.button_color, fg="white", font=("Arial", 12, "bold"), 
-                                         height=1, width=15, relief=tk.RAISED, bd=3,
+                                         height=1, width=14, relief=tk.RAISED, bd=2,
                                          cursor="hand2")
-        self.calculate_button.pack(pady=15)
+        self.calculate_button.pack(pady=8)
         self.calculate_button.bind("<Enter>", lambda e: self.calculate_button.config(bg=self.hover_color))
         self.calculate_button.bind("<Leave>", lambda e: self.calculate_button.config(bg=self.button_color))
 
         # Футер
-        footer_label = tk.Label(root, text="Сделано с 💙 для миньонов-математиков", 
+        footer_label = tk.Label(main_frame, text="Сделано с 💙 для миньонов-математиков", 
                                bg=self.bg_color, fg=self.text_color, font=("Arial", 9))
-        footer_label.pack(pady=10)
+        footer_label.pack(pady=5)
+
+    def format_polynomial_reversed(self, poly):
+        """Форматирует полином в порядке от старшей степени к младшей"""
+        if poly.is_zero():
+            return "0"
+        
+        terms_list = []
+        # Получаем все степени и сортируем по убыванию
+        sorted_powers = sorted(poly.terms.keys(), reverse=True)
+        
+        for power in sorted_powers:
+            coeff = poly.terms[power]
+            if coeff.is_zero():
+                continue
+            
+            coeff_str = str(coeff)
+            
+            if power == 0:
+                terms_list.append(coeff_str)
+            elif power == 1:
+                if coeff_str == "1":
+                    terms_list.append("x")
+                elif coeff_str == "-1":
+                    terms_list.append("-x")
+                else:
+                    terms_list.append(f"{coeff_str}*x")
+            else:
+                if coeff_str == "1":
+                    terms_list.append(f"x^{power}")
+                elif coeff_str == "-1":
+                    terms_list.append(f"-x^{power}")
+                else:
+                    terms_list.append(f"{coeff_str}*x^{power}")
+        
+        # Собираем строку, обрабатывая знаки
+        result = ""
+        for i, term in enumerate(terms_list):
+            if i == 0:
+                result = term
+            else:
+                if term.startswith('-'):
+                    result += f" - {term[1:]}"
+                else:
+                    result += f" + {term}"
+        
+        return result
 
     def hide_all_extra_fields(self):
         """Скрывает все дополнительные поля ввода"""
@@ -182,46 +245,60 @@ class PolynomialApp:
         if not poly_str:
             raise ValueError("Пустая строка")
         
-        # Разделяем коэффициенты по пробелам
-        coefficients = poly_str.strip().split()
-        if not coefficients:
-            raise ValueError("Нет коэффициентов")
+        # Убираем лишние пробелы
+        poly_str = poly_str.strip()
+        if not poly_str:
+            raise ValueError("Пустая строка")
         
-        # Проверяем, что все коэффициенты - числа
-        for coeff in coefficients:
-            if '/' in coeff:
-                # Рациональное число формата a/b
-                parts = coeff.split('/')
-                if len(parts) != 2:
-                    raise ValueError(f"Неверный формат рационального числа: {coeff}")
-                num, den = parts
-                if not num.lstrip('-').isdigit() or not den.isdigit():
-                    raise ValueError(f"Неверный формат рационального числа: {coeff}")
-            else:
-                # Целое число
-                if not coeff.lstrip('-').isdigit():
-                    raise ValueError(f"Нечисловой коэффициент: {coeff}")
+        # Проверяем базовую структуру
+        if any(char.isalpha() and char != 'x' for char in poly_str):
+            raise ValueError("Недопустимые символы в полиноме")
         
-        return Polynomial(poly_str)
+        try:
+            return Polynomial(poly_str)
+        except Exception as e:
+            raise ValueError(f"Неверный формат полинома: {str(e)}")
 
     def get_Rational(self, rational_str):
         """Преобразует строку в рациональное число с проверкой"""
         if not rational_str:
             raise ValueError("Пустая строка")
         
+        rational_str = rational_str.strip()
+        
+        # Проверяем формат рационального числа
         if '/' in rational_str:
             parts = rational_str.split('/')
             if len(parts) != 2:
-                raise ValueError("Неверный формат рационального числа")
+                raise ValueError("Неверный формат рационального числа (должен быть a/b)")
             num_str, den_str = parts
-            if not num_str.lstrip('-').isdigit() or not den_str.isdigit():
-                raise ValueError("Неверный формат рационального числа")
+            if not num_str.lstrip('-').replace('.', '').isdigit() or not den_str.replace('.', '').isdigit():
+                raise ValueError("Числитель и знаменатель должны быть числами")
         else:
-            if not rational_str.lstrip('-').isdigit():
+            # Целое число
+            if not rational_str.lstrip('-').replace('.', '').isdigit():
                 raise ValueError("Не числовое значение")
         
         from Rational import Rational
-        return Rational(rational_str)
+        try:
+            return Rational(rational_str)
+        except Exception as e:
+            raise ValueError(f"Неверный формат рационального числа: {str(e)}")
+
+    def get_Natural(self, k_str):
+        """Преобразует строку в натуральное число с проверкой"""
+        if not k_str:
+            raise ValueError("Пустая строка")
+        
+        if not k_str.isdigit():
+            raise ValueError("Степень должна быть натуральным числом")
+        
+        k = int(k_str)
+        if k < 0:
+            raise ValueError("Степень должна быть неотрицательной")
+        
+        from Natural import Natural
+        return Natural(str(k))
 
     def calculate(self):
         self.result_label.config(text='Вычисляю... Ба-на-на! 🍌', fg="black")
@@ -234,7 +311,7 @@ class PolynomialApp:
             if not first_poly_str:
                 messagebox.showerror("Ошибка", "😢 Банана! Введите первый многочлен")
             else:
-                messagebox.showerror("Ошибка", f"😠 Неверный формат: {str(e)}")
+                messagebox.showerror("Ошибка", f"😠 Неверный формат полинома: {str(e)}")
             return
 
         if method_name in ["Сложение многочленов", "Вычитание многочленов", "Умножение многочленов", 
@@ -248,88 +325,102 @@ class PolynomialApp:
                 if not second_poly_str:
                     messagebox.showerror("Ошибка", "😢 Банана! Введите второй многочлен")
                 else:
-                    messagebox.showerror("Ошибка", f"😠 Неверный формат: {str(e)}")
+                    messagebox.showerror("Ошибка", f"😠 Неверный формат полинома: {str(e)}")
                 return
 
-            if method_name == "Сложение многочленов":
-                result = first_poly.ADD_PP_P(second_poly)
-                # Более компактное отображение
-                self.result_label.config(text=f"🎉 ({first_poly}) + ({second_poly}) = {result}")
+            try:
+                if method_name == "Сложение многочленов":
+                    result = first_poly.ADD_PP_P(second_poly)
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Сумма:\n({self.format_polynomial_reversed(first_poly)}) + ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
-            elif method_name == "Вычитание многочленов":
-                result = first_poly.SUB_PP_P(second_poly)
-                self.result_label.config(text=f"🎉 ({first_poly}) - ({second_poly}) = {result}")
+                elif method_name == "Вычитание многочленов":
+                    result = first_poly.SUB_PP_P(second_poly)
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Разность:\n({self.format_polynomial_reversed(first_poly)}) - ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
-            elif method_name == "Умножение многочленов":
-                result = first_poly.MUL_PP_P(second_poly)
-                self.result_label.config(text=f"🎉 ({first_poly}) × ({second_poly}) = {result}")
+                elif method_name == "Умножение многочленов":
+                    result = first_poly.MUL_PP_P(second_poly)
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Произведение:\n({self.format_polynomial_reversed(first_poly)}) × ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
-            elif method_name == "Деление многочленов":
-                try:
+                elif method_name == "Деление многочленов":
                     result = first_poly.DIV_PP_P(second_poly)
-                    self.result_label.config(text=f"🎉 ({first_poly}) ÷ ({second_poly}) = {result}")
-                except ZeroDivisionError:
-                    messagebox.showerror("Ошибка", "😠 Ой-ой! Деление на нулевой многочлен!")
-                    return
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Частное:\n({self.format_polynomial_reversed(first_poly)}) ÷ ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
-            elif method_name == "Остаток от деления":
-                try:
+                elif method_name == "Остаток от деления":
                     result = first_poly.MOD_PP_P(second_poly)
-                    self.result_label.config(text=f"🎉 ({first_poly}) mod ({second_poly}) = {result}")
-                except ZeroDivisionError:
-                    messagebox.showerror("Ошибка", "😠 Ой-ой! Деление на нулевой многочлен!")
-                    return
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Остаток:\n({self.format_polynomial_reversed(first_poly)}) mod ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
-            elif method_name == "НОД многочленов":
-                result = first_poly.GCF_PP_P(second_poly)
-                self.result_label.config(text=f"🎉 НОД(({first_poly}), ({second_poly})) = {result}")
+                elif method_name == "НОД многочленов":
+                    result = first_poly.GCF_PP_P(second_poly)
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 НОД:\nНОД(({self.format_polynomial_reversed(first_poly)}), ({self.format_polynomial_reversed(second_poly)})) = {formatted_result}")
+
+            except ZeroDivisionError:
+                messagebox.showerror("Ошибка", "😠 Ой-ой! Деление на нулевой многочлен!")
+                return
+            except Exception as e:
+                messagebox.showerror("Ошибка", f"😠 Математическая ошибка: {str(e)}")
+                return
 
         elif method_name == "Умножение на рациональное число":
             rational_str = self.rational_entry.get().strip()
             try:
                 rational_num = self.get_Rational(rational_str)
                 result = first_poly.MUL_PQ_P(rational_num)
-                self.result_label.config(text=f"🎉 ({first_poly}) × {rational_num} = {result}")
+                formatted_result = self.format_polynomial_reversed(result)
+                self.result_label.config(text=f"🎉 Умножение на число:\n({self.format_polynomial_reversed(first_poly)}) × {rational_num} = {formatted_result}")
             except ValueError as e:
                 if not rational_str:
                     messagebox.showerror("Ошибка", "🍌 Банана! Введите рациональное число")
                 else:
-                    messagebox.showerror("Ошибка", f"🍌 Неверный формат: {str(e)}")
+                    messagebox.showerror("Ошибка", f"🍌 Неверный формат числа: {str(e)}")
                 return
 
         elif method_name == "Умножение на x^k":
             k_str = self.k_entry.get().strip()
-            if not k_str or not k_str.isdigit():
-                messagebox.showerror("Ошибка", "👓 Степень k должна быть натуральным числом")
-                return
-            k = int(k_str)
             try:
+                k = self.get_Natural(k_str)
                 result = first_poly.MUL_Pxk_P(k)
-                self.result_label.config(text=f"🎉 ({first_poly}) × x^{k} = {result}")
-            except Exception as e:
-                messagebox.showerror("Ошибка", f"👓 Ошибка: {str(e)}")
+                formatted_result = self.format_polynomial_reversed(result)
+                self.result_label.config(text=f"🎉 Умножение на x^k:\n({self.format_polynomial_reversed(first_poly)}) × x^{k} = {formatted_result}")
+            except ValueError as e:
+                if not k_str:
+                    messagebox.showerror("Ошибка", "👓 Банана! Введите степень k")
+                else:
+                    messagebox.showerror("Ошибка", f"👓 {str(e)}")
                 return
 
         else:
-            if method_name == "Старший коэффициент":
-                result = first_poly.LED_P_Q()
-                self.result_label.config(text=f"🎉 Старший коэффициент ({first_poly}) = {result}")
+            try:
+                if method_name == "Старший коэффициент":
+                    result = first_poly.LED_P_Q()
+                    self.result_label.config(text=f"🎉 Старший коэффициент:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтарший коэффициент = {result}")
 
-            elif method_name == "Степень многочлена":
-                result = first_poly.DEG_P_N()
-                self.result_label.config(text=f"🎉 Степень ({first_poly}) = {result}")
+                elif method_name == "Степень многочлена":
+                    result = first_poly.DEG_P_N()
+                    self.result_label.config(text=f"🎉 Степень полинома:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтепень = {result}")
 
-            elif method_name == "НОК знаменателей и НОД числителей":
-                result = first_poly.FAC_P_Q()
-                self.result_label.config(text=f"🎉 НОК/НОД ({first_poly}) = {result}")
+                elif method_name == "НОК знаменателей и НОД числителей":
+                    result = first_poly.FAC_P_Q()
+                    self.result_label.config(text=f"🎉 НОК знаменателей и НОД числителей:\nПолином: {self.format_polynomial_reversed(first_poly)}\nРезультат = {result}")
 
-            elif method_name == "Производная многочлена":
-                result = first_poly.DER_P_P()
-                self.result_label.config(text=f"🎉 Производная ({first_poly}) = {result}")
+                elif method_name == "Производная многочлена":
+                    result = first_poly.DER_P_P()
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Производная:\nПолином: {self.format_polynomial_reversed(first_poly)}\nПроизводная = {formatted_result}")
 
-            elif method_name == "Кратные корни в простые":
-                result = first_poly.NMR_P_P()
-                self.result_label.config(text=f"🎉 Упрощенный ({first_poly}) = {result}")
+                elif method_name == "Кратные корни в простые":
+                    result = first_poly.NMR_P_P()
+                    formatted_result = self.format_polynomial_reversed(result)
+                    self.result_label.config(text=f"🎉 Упрощение (кратные корни → простые):\nИсходный: {self.format_polynomial_reversed(first_poly)}\nУпрощенный = {formatted_result}")
+
+            except Exception as e:
+                messagebox.showerror("Ошибка", f"😠 Математическая ошибка: {str(e)}")
+                return
 
 
 def create_PolynomialApp(root):

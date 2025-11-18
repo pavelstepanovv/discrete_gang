@@ -100,25 +100,23 @@ class Rational:
 
     #6. Вычитание дробей
     def SUB_QQ_Q(self, other):
-
-       # Находим НОК знаменателей (используем LCM_NN_N из модуля Natural)
+        # Находим НОК знаменателей
         common_den = self.denominator.LCM_NN_N(other.denominator)
         # Приводим обе дроби к общему знаменателю:
-        # домножаем числители на (НОК / свой знаменатель)
         k1 = common_den.DIV_NN_N(self.denominator)
         k2 = common_den.DIV_NN_N(other.denominator)
 
         num1_scaled = Integer.MUL_ZZ_Z(self.numerator, Integer.TRANS_N_Z(k1))
         num2_scaled = Integer.MUL_ZZ_Z(other.numerator, Integer.TRANS_N_Z(k2))
 
-        # Вычитаем числители (используем SUB_ZZ_Z из Integer)
+        # Вычитаем числители
         new_num = Integer.SUB_ZZ_Z(num1_scaled, num2_scaled)
 
-        # Новый знаменатель — общий НОК
-        new_den = common_den
-
-        # Возвращаем новую рациональную дробь
-        return Rational(f'{new_num}/{new_den}')
+        # Создаем новую дробь
+        result = Rational(f'{new_num}/{common_den}')
+        
+        # Сокращаем полученную дробь
+        return result.RED_Q_Q()
 
     #7. Умножение дробей
     def MUL_QQ_Q(self, other):
@@ -178,5 +176,3 @@ def Rational_test():
     print(f'{a} - {b} = {a.SUB_QQ_Q(b)}')  # 1/6
     print(f'{a} ∙ {b} = {a.MUL_QQ_Q(b)}')  # 1/6
     print(f'{a} / {b} = {a.DIV_QQ_Q(b)}')  # 3/2
-
-
