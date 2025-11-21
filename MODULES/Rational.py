@@ -177,3 +177,5 @@ def Rational_test():
     print(f'{a} ∙ {b} = {a.MUL_QQ_Q(b)}')  # 1/6
 
     print(f'{a} / {b} = {a.DIV_QQ_Q(b)}')  # 3/2
+
+Rational_test()
