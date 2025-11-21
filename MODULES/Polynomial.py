@@ -1,9 +1,9 @@
 # выполнили Мазеев В., гр. 4384, Калинина А., гр. 4384 и Дровнев Д., гр. 4384
 
 from __future__ import annotations
-from Rational import Rational
-from Integer import Integer
-from Natural import Natural
+from .Rational import Rational
+from .Integer import Integer
+from .Natural import Natural
 
 
 class Polynomial:
@@ -428,4 +428,5 @@ if __name__ == "__main__":
     print(f"poly1 * poly2 = {poly1.MUL_PP_P(poly2)}")
     print(f"Степень poly1: {poly1.DEG_P_N()}")
     print(f"Старший коэффициент poly1: {poly1.LED_P_Q()}")
+
     print(f"Производная poly1: {poly1.DER_P_P()}")
