@@ -370,4 +370,3 @@ def tests_for_naturales():
     print(f"   НОК({num2}, {num4}) = {num2.LCM_NN_N(num4)}")  # НОК(23, 345) = 345
     
 tests_for_naturales()
-

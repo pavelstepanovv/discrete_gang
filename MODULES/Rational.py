@@ -151,8 +151,8 @@ class Rational:
         # Возвращаем произведение исходной дроби и перевёрнутой (через MUL_ZZ_Z внутри MUL_QQ_Q)
         return self.MUL_QQ_Q(reciprocal)
 
-# Тестирование
-if __name__ == "__main__":
+#тесты
+def Rational_test():
     print('Базовая проверка рациональных:')
     x = Rational('8/6')      # = 4/3 после сокращения
     y = Rational('-9/3')     # = -3 (целое!)
@@ -175,5 +175,4 @@ if __name__ == "__main__":
     print(f'{a} + {b} = {a.ADD_QQ_Q(b)}')  # 5/6
     print(f'{a} - {b} = {a.SUB_QQ_Q(b)}')  # 1/6
     print(f'{a} ∙ {b} = {a.MUL_QQ_Q(b)}')  # 1/6
-
     print(f'{a} / {b} = {a.DIV_QQ_Q(b)}')  # 3/2
