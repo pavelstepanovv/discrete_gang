@@ -1,6 +1,6 @@
 #выполнили Кяримов А., гр. 4381 и Серженко Д., гр. 4384
 
-from Natural import Natural
+from .Natural import Natural
 class Integer:
     def __init__(self, number: str):
         # Инициализация целого числа из строки
@@ -396,5 +396,6 @@ def tests_for_integers():
         print(f"   {int1} % {int3} = ОШИБКА - исключение не сработало!")
     except ZeroDivisionError as e:
         print(f"   {int1} % {int3} = {e}")
+
 
 tests_for_integers()
