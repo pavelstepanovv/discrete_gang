@@ -1,7 +1,7 @@
 # выполнили Сморыго Ю., гр. 4384 и Зайченко Е., гр. 4384
 
-from Natural import Natural
-from Integer import Integer
+from .Natural import Natural
+from .Integer import Integer
 
 
 class Rational:
@@ -175,4 +175,5 @@ def Rational_test():
     print(f'{a} + {b} = {a.ADD_QQ_Q(b)}')  # 5/6
     print(f'{a} - {b} = {a.SUB_QQ_Q(b)}')  # 1/6
     print(f'{a} ∙ {b} = {a.MUL_QQ_Q(b)}')  # 1/6
+
     print(f'{a} / {b} = {a.DIV_QQ_Q(b)}')  # 3/2
