@@ -91,21 +91,21 @@ class PolynomialApp:
 
         # Рациональное число (специальное поле)
         self.rational_label = tk.Label(self.input_frame, text="🍌 Рациональное число:", bg=self.bg_color, 
-                                      fg=self.text_color, font=("Arial", 11))
+                  fg=self.text_color, font=("Arial", 11))
         self.rational_label.grid(row=4, column=0, sticky="w", pady=(8, 3))
         
         self.rational_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=20, 
-                                     font=("Arial", 11), relief=tk.SUNKEN, bd=2)
+                 font=("Arial", 11), relief=tk.SUNKEN, bd=2)
         self.rational_entry.grid(row=5, column=0, pady=3, sticky="w")
 
         # Степень k (специальное поле)
         self.k_label = tk.Label(self.input_frame, text="👓 Степень k:", bg=self.bg_color, 
-                               fg=self.text_color, font=("Arial", 11))
-        self.k_label.grid(row=4, column=1, sticky="w", pady=(8, 3))
+                   fg=self.text_color, font=("Arial", 11))
+        self.k_label.grid(row=4, column=0, sticky="w", pady=(8, 3))
         
         self.k_entry = tk.Entry(self.input_frame, bg="white", fg="black", width=12, 
-                              font=("Arial", 11), relief=tk.SUNKEN, bd=2)
-        self.k_entry.grid(row=5, column=1, pady=3, sticky="w")
+                  font=("Arial", 11), relief=tk.SUNKEN, bd=2)
+        self.k_entry.grid(row=5, column=0, pady=3, sticky="w")
 
         # Подсказка для формата ввода (ОБНОВЛЕНА)
         hint_label = tk.Label(self.input_frame, 
@@ -128,18 +128,47 @@ class PolynomialApp:
         # Изначально скрываем ненужные поля
         self.hide_all_extra_fields()
 
-        # Метка для результата с увеличенным шрифтом
+        # Окно результата — заменил Label на Text с прокруткой колесиком
         result_frame = tk.Frame(main_frame, bg=self.window_color, bd=2, relief=tk.GROOVE)
-        result_frame.pack(pady=10, fill=tk.X)
-        
+        result_frame.pack(pady=10, fill=tk.BOTH, expand=False)
+
         result_title = tk.Label(result_frame, text="🎯 Результат:", bg=self.window_color, fg="white", 
                                font=("Arial", 12, "bold"))
-        result_title.pack(pady=(5, 0))
-        
-        self.result_label = tk.Label(result_frame, text="Банана! Здесь появится результат...", 
-                                    bg="white", fg="black", font=("Arial", 11),  # Увеличил шрифт
-                                    wraplength=580, justify=tk.LEFT, height=6)  # Увеличил высоту и ширину
-        self.result_label.pack(pady=5, padx=5, fill=tk.BOTH, expand=True)
+        result_title.pack(pady=(5, 0), anchor="w", padx=4)
+
+        # Контейнер для текстового виджета и скроллбара
+        text_container = tk.Frame(result_frame, bg=self.window_color)
+        text_container.pack(pady=5, padx=5, fill=tk.BOTH, expand=True)
+
+        self.result_text = tk.Text(text_container, bg="white", fg="black", font=("Arial", 11),
+                                   wrap=tk.WORD, height=8, relief=tk.SUNKEN, bd=2)
+        self.result_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        # По умолчанию текст не редактируем
+        self.result_text.config(state=tk.DISABLED)
+
+        scrollbar = tk.Scrollbar(text_container, command=self.result_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.result_text['yscrollcommand'] = scrollbar.set
+
+        # Поддержка прокрутки колесиком мыши (Windows)
+        def _on_mousewheel(event):
+            # event.delta кратен 120 на Windows
+            self.result_text.yview_scroll(-1 * (event.delta // 120), "units")
+
+        # Когда курсор над текстом — фокус для перехвата колесика
+        self.result_text.bind('<Enter>', lambda e: self.result_text.focus_set())
+        self.result_text.bind('<MouseWheel>', _on_mousewheel)
+
+        # Небольшая helper-функция для записи результата
+        def set_result(text, fg="black"):
+            self.result_text.config(state=tk.NORMAL)
+            self.result_text.delete('1.0', tk.END)
+            self.result_text.insert(tk.END, text)
+            self.result_text.config(fg=fg)
+            self.result_text.config(state=tk.DISABLED)
+
+        # Сохраняем helper как атрибут для использования в методах
+        self.set_result = set_result
 
         # Кнопка выполнения (теперь в основном фрейме)
         self.calculate_button = tk.Button(main_frame, text="🚀 Выполнить!", command=self.calculate, 
@@ -301,7 +330,7 @@ class PolynomialApp:
         return Natural(str(k))
 
     def calculate(self):
-        self.result_label.config(text='Вычисляю... Ба-на-на! 🍌', fg="black")
+        self.set_result('Вычисляю... Ба-на-на! 🍌', fg="black")
         method_name = self.method_var.get()
         first_poly_str = self.first_poly_entry.get().strip()
 
@@ -332,32 +361,32 @@ class PolynomialApp:
                 if method_name == "Сложение многочленов":
                     result = first_poly.ADD_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Сумма:\n({self.format_polynomial_reversed(first_poly)}) + ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
+                    self.set_result(f"🎉 Сумма:\n({self.format_polynomial_reversed(first_poly)}) + ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
                 elif method_name == "Вычитание многочленов":
                     result = first_poly.SUB_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Разность:\n({self.format_polynomial_reversed(first_poly)}) - ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
+                    self.set_result(f"🎉 Разность:\n({self.format_polynomial_reversed(first_poly)}) - ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
                 elif method_name == "Умножение многочленов":
                     result = first_poly.MUL_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Произведение:\n({self.format_polynomial_reversed(first_poly)}) × ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
+                    self.set_result(f"🎉 Произведение:\n({self.format_polynomial_reversed(first_poly)}) × ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
                 elif method_name == "Деление многочленов":
                     result = first_poly.DIV_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Частное:\n({self.format_polynomial_reversed(first_poly)}) ÷ ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
+                    self.set_result(f"🎉 Частное:\n({self.format_polynomial_reversed(first_poly)}) ÷ ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
                 elif method_name == "Остаток от деления":
                     result = first_poly.MOD_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Остаток:\n({self.format_polynomial_reversed(first_poly)}) mod ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
+                    self.set_result(f"🎉 Остаток:\n({self.format_polynomial_reversed(first_poly)}) mod ({self.format_polynomial_reversed(second_poly)}) = {formatted_result}")
 
                 elif method_name == "НОД многочленов":
                     result = first_poly.GCF_PP_P(second_poly)
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 НОД:\nНОД(({self.format_polynomial_reversed(first_poly)}), ({self.format_polynomial_reversed(second_poly)})) = {formatted_result}")
+                    self.set_result(f"🎉 НОД:\nНОД(({self.format_polynomial_reversed(first_poly)}), ({self.format_polynomial_reversed(second_poly)})) = {formatted_result}")
 
             except ZeroDivisionError:
                 messagebox.showerror("Ошибка", "😠 Ой-ой! Деление на нулевой многочлен!")
@@ -372,7 +401,7 @@ class PolynomialApp:
                 rational_num = self.get_Rational(rational_str)
                 result = first_poly.MUL_PQ_P(rational_num)
                 formatted_result = self.format_polynomial_reversed(result)
-                self.result_label.config(text=f"🎉 Умножение на число:\n({self.format_polynomial_reversed(first_poly)}) × {rational_num} = {formatted_result}")
+                self.set_result(f"🎉 Умножение на число:\n({self.format_polynomial_reversed(first_poly)}) × {rational_num} = {formatted_result}")
             except ValueError as e:
                 if not rational_str:
                     messagebox.showerror("Ошибка", "🍌 Банана! Введите рациональное число")
@@ -386,7 +415,7 @@ class PolynomialApp:
                 k = self.get_Natural(k_str)
                 result = first_poly.MUL_Pxk_P(k)
                 formatted_result = self.format_polynomial_reversed(result)
-                self.result_label.config(text=f"🎉 Умножение на x^k:\n({self.format_polynomial_reversed(first_poly)}) × x^{k} = {formatted_result}")
+                self.set_result(f"🎉 Умножение на x^k:\n({self.format_polynomial_reversed(first_poly)}) × x^{k} = {formatted_result}")
             except ValueError as e:
                 if not k_str:
                     messagebox.showerror("Ошибка", "👓 Банана! Введите степень k")
@@ -398,25 +427,25 @@ class PolynomialApp:
             try:
                 if method_name == "Старший коэффициент":
                     result = first_poly.LED_P_Q()
-                    self.result_label.config(text=f"🎉 Старший коэффициент:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтарший коэффициент = {result}")
+                    self.set_result(f"🎉 Старший коэффициент:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтарший коэффициент = {result}")
 
                 elif method_name == "Степень многочлена":
                     result = first_poly.DEG_P_N()
-                    self.result_label.config(text=f"🎉 Степень полинома:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтепень = {result}")
+                    self.set_result(f"🎉 Степень полинома:\nПолином: {self.format_polynomial_reversed(first_poly)}\nСтепень = {result}")
 
                 elif method_name == "НОК знаменателей и НОД числителей":
                     result = first_poly.FAC_P_Q()
-                    self.result_label.config(text=f"🎉 НОК знаменателей и НОД числителей:\nПолином: {self.format_polynomial_reversed(first_poly)}\nРезультат = {result}")
+                    self.set_result(f"🎉 НОК знаменателей и НОД числителей:\nПолином: {self.format_polynomial_reversed(first_poly)}\nРезультат = {result}")
 
                 elif method_name == "Производная многочлена":
                     result = first_poly.DER_P_P()
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Производная:\nПолином: {self.format_polynomial_reversed(first_poly)}\nПроизводная = {formatted_result}")
+                    self.set_result(f"🎉 Производная:\nПолином: {self.format_polynomial_reversed(first_poly)}\nПроизводная = {formatted_result}")
 
                 elif method_name == "Кратные корни в простые":
                     result = first_poly.NMR_P_P()
                     formatted_result = self.format_polynomial_reversed(result)
-                    self.result_label.config(text=f"🎉 Упрощение (кратные корни → простые):\nИсходный: {self.format_polynomial_reversed(first_poly)}\nУпрощенный = {formatted_result}")
+                    self.set_result(f"🎉 Упрощение (кратные корни → простые):\nИсходный: {self.format_polynomial_reversed(first_poly)}\nУпрощенный = {formatted_result}")
 
             except Exception as e:
                 messagebox.showerror("Ошибка", f"😠 Математическая ошибка: {str(e)}")

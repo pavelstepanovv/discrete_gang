@@ -96,18 +96,40 @@ class RationalApp:
         # Изначально скрываем ненужные поля
         self.hide_all_extra_fields()
 
-        # Метка для результата
+        # Окно результата (заменил Label на Text с прокруткой колесиком)
         result_frame = tk.Frame(root, bg=self.backlight, bd=3, relief=tk.GROOVE)
-        result_frame.pack(pady=20, padx=25, fill=tk.X)
-        
+        result_frame.pack(pady=10, padx=25, fill=tk.BOTH, expand=False)
+
         result_title = tk.Label(result_frame, text="🎯 Результат заклинания:", bg=self.backlight, fg="black", 
                                font=("Arial", 11, "bold"))
         result_title.pack(pady=(8, 0))
-        
-        self.result_label = tk.Label(result_frame, text="Здесь появится результат магических вычислений...", 
-                                    bg="white", fg="black", font=("Arial", 12), 
-                                    wraplength=380, justify=tk.CENTER, height=3)
-        self.result_label.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        text_container = tk.Frame(result_frame, bg=self.backlight)
+        text_container.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        self.result_text = tk.Text(text_container, bg="white", fg="black", font=("Arial", 12),
+                       wrap=tk.WORD, height=8, relief=tk.SUNKEN, bd=2)
+        self.result_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.result_text.config(state=tk.DISABLED)
+
+        scrollbar = tk.Scrollbar(text_container, command=self.result_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.result_text['yscrollcommand'] = scrollbar.set
+
+        def _on_mousewheel(event):
+            self.result_text.yview_scroll(-1 * (event.delta // 120), "units")
+
+        self.result_text.bind('<Enter>', lambda e: self.result_text.focus_set())
+        self.result_text.bind('<MouseWheel>', _on_mousewheel)
+
+        def set_result(text, fg="black"):
+            self.result_text.config(state=tk.NORMAL)
+            self.result_text.delete('1.0', tk.END)
+            self.result_text.insert(tk.END, text)
+            self.result_text.config(fg=fg)
+            self.result_text.config(state=tk.DISABLED)
+
+        self.set_result = set_result
 
         # Кнопка выполнения
         self.calculate_button = tk.Button(root, text="⚡ Вычислить", command=self.calculate, 
@@ -198,7 +220,7 @@ class RationalApp:
         return Integer(number_str)
 
     def calculate(self):
-        self.result_label.config(text='Произношу заклинание... ⚡', fg="black")
+        self.set_result('Произношу заклинание... ⚡', fg="black")
         method_name = self.method_var.get()
 
         # Для методов, работающих с первой дробью, читаем и проверяем её ввод
@@ -251,20 +273,20 @@ class RationalApp:
 
             if method_name == "Сложение дробей":
                 result = first_fraction.ADD_QQ_Q(second_fraction)
-                self.result_label.config(text=f"🎯 {first_fraction} + {second_fraction} = {result}")
+                self.set_result(f"🎯 {first_fraction} + {second_fraction} = {result}")
 
             elif method_name == "Вычитание дробей":
                 result = first_fraction.SUB_QQ_Q(second_fraction)
-                self.result_label.config(text=f"🎯 {first_fraction} - {second_fraction} = {result}")
+                self.set_result(f"🎯 {first_fraction} - {second_fraction} = {result}")
 
             elif method_name == "Умножение дробей":
                 result = first_fraction.MUL_QQ_Q(second_fraction)
-                self.result_label.config(text=f"🎯 {first_fraction} × {second_fraction} = {result}")
+                self.set_result(f"🎯 {first_fraction} × {second_fraction} = {result}")
 
             elif method_name == "Деление дробей":
                 try:
                     result = first_fraction.DIV_QQ_Q(second_fraction)
-                    self.result_label.config(text=f"🎯 {first_fraction} ÷ {second_fraction} = {result}")
+                    self.set_result(f"🎯 {first_fraction} ÷ {second_fraction} = {result}")
                 except ValueError as e:
                     messagebox.showerror("Ошибка", f"⚡ {str(e)}")
                     return
@@ -275,7 +297,7 @@ class RationalApp:
                 integer_number = self.get_Integer(integer_str)
                 result = Rational.TRANS_Z_Q(integer_number)
                 # Показываем явно представление в виде дроби с /1
-                self.result_label.config(text=f"✨ Integer('{integer_str}') → {result.numerator}/{result.denominator}")
+                self.set_result(f"✨ Integer('{integer_str}') → {result.numerator}/{result.denominator}")
             except ValueError:
                 if not integer_str:
                     messagebox.showerror("Ошибка", "⚡ Пожалуйста, введите целое число")
@@ -287,14 +309,14 @@ class RationalApp:
             if method_name == "Сокращение дроби":
                 result = first_fraction.RED_Q_Q()
                 # Показываем результат в виде дроби даже если знаменатель = 1
-                self.result_label.config(text=f"✨ {first_fraction} → {result.numerator}/{result.denominator}")
+                self.set_result(f"✨ {first_fraction} → {result.numerator}/{result.denominator}")
 
             elif method_name == "Проверка на целое":
                 is_integer = first_fraction.INT_Q_B()
                 if is_integer == 'да':
-                    self.result_label.config(text=f"✅ {first_fraction} — целое число")
+                    self.set_result(f"✅ {first_fraction} — целое число")
                 else:
-                    self.result_label.config(text=f"❌ {first_fraction} — дробное число")
+                    self.set_result(f"❌ {first_fraction} — дробное число")
 
             elif method_name == "Преобразование дробного в целое":
                 try:
@@ -306,7 +328,7 @@ class RationalApp:
 
                     result = first_fraction.TRANS_Q_Z()
                     # Показываем исходную строку ввода и целочисленный результат
-                    self.result_label.config(text=f"✨ {first_fraction_str} → {result}")
+                    self.set_result(f"✨ {first_fraction_str} → {result}")
                 except ValueError as e:
                     messagebox.showerror("Ошибка", f"⚡ {str(e)}")
                     return

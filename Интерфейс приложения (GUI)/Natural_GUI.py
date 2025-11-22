@@ -107,18 +107,40 @@ class NaturalApp:
         # Изначально скрываем ненужные поля
         self.hide_all_extra_fields()
 
-        # Метка для результата с милым оформлением
+        # Окно результата (заменил Label на Text с прокруткой колесиком)
         result_frame = tk.Frame(root, bg=self.backlight, bd=3, relief=tk.GROOVE)
-        result_frame.pack(pady=20, padx=25, fill=tk.X)
-        
+        result_frame.pack(pady=10, padx=25, fill=tk.BOTH, expand=False)
+
         result_title = tk.Label(result_frame, text="🎯 Результат:", bg=self.backlight, fg="white", 
                                font=("Arial", 11, "bold"))
         result_title.pack(pady=(8, 0))
-        
-        self.result_label = tk.Label(result_frame, text="Здесь появится результат вычислений...", 
-                                    bg=self.window_color, fg=self.text_color, font=("Arial", 12), 
-                                    wraplength=380, justify=tk.CENTER, height=3)
-        self.result_label.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        text_container = tk.Frame(result_frame, bg=self.backlight)
+        text_container.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        self.result_text = tk.Text(text_container, bg=self.window_color, fg=self.text_color, font=("Arial", 12),
+                       wrap=tk.WORD, height=8, relief=tk.SUNKEN, bd=2)
+        self.result_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.result_text.config(state=tk.DISABLED)
+
+        scrollbar = tk.Scrollbar(text_container, command=self.result_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.result_text['yscrollcommand'] = scrollbar.set
+
+        def _on_mousewheel(event):
+            self.result_text.yview_scroll(-1 * (event.delta // 120), "units")
+
+        self.result_text.bind('<Enter>', lambda e: self.result_text.focus_set())
+        self.result_text.bind('<MouseWheel>', _on_mousewheel)
+
+        def set_result(text, fg=self.text_color):
+            self.result_text.config(state=tk.NORMAL)
+            self.result_text.delete('1.0', tk.END)
+            self.result_text.insert(tk.END, text)
+            self.result_text.config(fg=fg)
+            self.result_text.config(state=tk.DISABLED)
+
+        self.set_result = set_result
 
         # Кнопка выполнения с кошачьей темой
         self.calculate_button = tk.Button(root, text="🐾 Вычислить!", command=self.calculate, 
@@ -200,7 +222,7 @@ class NaturalApp:
         return Natural(number_str)
 
     def calculate(self):
-        self.result_label.config(text='Вычисляю... 🐱', fg=self.text_color)
+        self.set_result('Вычисляю... 🐱', fg=self.text_color)
         method_name = self.method_var.get()
         first_number_str = self.first_number_entry.get().strip()
 
@@ -235,23 +257,23 @@ class NaturalApp:
                     1: f"🐭 {first_number} < {second_number}", 
                     0: f"💖 {first_number} = {second_number}"
                 }
-                self.result_label.config(text=comparison_texts[comparison_result])
+                self.set_result(comparison_texts[comparison_result])
 
             elif method_name == "Сложение двух чисел":
                 result = first_number.ADD_NN_N(second_number)
-                self.result_label.config(text=f"🎀 {first_number} + {second_number} = {result}")
+                self.set_result(f"🎀 {first_number} + {second_number} = {result}")
 
             elif method_name == "Вычитание двух чисел":
                 try:
                     result = first_number.SUB_NN_N(second_number)
-                    self.result_label.config(text=f"🎀 {first_number} - {second_number} = {result}")
+                    self.set_result(f"🎀 {first_number} - {second_number} = {result}")
                 except ValueError:
                     messagebox.showerror("Ошибка", "😿 Результат вычитания должен быть натуральным числом")
                     return
 
             elif method_name == "Умножение двух чисел":
                 result = first_number.MUL_NN_N(second_number)
-                self.result_label.config(text=f"🎀 {first_number} × {second_number} = {result}")
+                self.set_result(f"🎀 {first_number} × {second_number} = {result}")
 
             elif method_name == "Вычитание умноженного на цифру":
                 digit_str = self.digit_entry.get().strip()
@@ -261,7 +283,7 @@ class NaturalApp:
                 digit = int(digit_str)
                 try:
                     result = first_number.SUB_NDN_N(second_number, digit)
-                    self.result_label.config(text=f"🎀 {first_number} - ({second_number} × {digit}) = {result}")
+                    self.set_result(f"🎀 {first_number} - ({second_number} × {digit}) = {result}")
                 except ValueError:
                     messagebox.showerror("Ошибка", "😿 Результат должен быть натуральным числом")
                     return
@@ -274,7 +296,7 @@ class NaturalApp:
                 k = int(k_str)
                 try:
                     result = first_number.DIV_NN_Dk(second_number, k)
-                    self.result_label.config(text=f"🔢 Цифра частного: {result}")
+                    self.set_result(f"🔢 Цифра частного: {result}")
                 except ValueError as e:
                     messagebox.showerror("Ошибка", f"😿 {str(e)}")
                     return
@@ -282,7 +304,7 @@ class NaturalApp:
             elif method_name == "Деление целочисленное":
                 try:
                     result = first_number.DIV_NN_N(second_number)
-                    self.result_label.config(text=f"🎀 {first_number} ÷ {second_number} = {result}")
+                    self.set_result(f"🎀 {first_number} ÷ {second_number} = {result}")
                 except:
                     messagebox.showerror("Ошибка", "😾 Деление на ноль невозможно")
                     return
@@ -290,30 +312,36 @@ class NaturalApp:
             elif method_name == "Деление с остатком":
                 try:
                     result = first_number.MOD_NN_N(second_number)
-                    self.result_label.config(text=f"🎀 {first_number} mod {second_number} = {result}")
+                    self.set_result(f"🎀 {first_number} mod {second_number} = {result}")
                 except:
                     messagebox.showerror("Ошибка", "😾 Деление на ноль невозможно")
                     return
 
             elif method_name == "НОД":
+                if str(first_number) == "0" and str(second_number) == "0":
+                    messagebox.showerror("Ошибка", "😾 НОД(0;0) неопределён!")
+                    return
                 result = first_number.GCF_NN_N(second_number)
-                self.result_label.config(text=f"💝 НОД({first_number}, {second_number}) = {result}")
+                self.set_result(f"💝 НОД({first_number}, {second_number}) = {result}")
 
             elif method_name == "НОК":
+                if str(first_number) == "0" or str(second_number) == "0":
+                    messagebox.showerror("Ошибка", f"😾 НОК({first_number};{second_number}) неопределён!")
+                    return
                 result = first_number.LCM_NN_N(second_number)
-                self.result_label.config(text=f"💝 НОК({first_number}, {second_number}) = {result}")
+                self.set_result(f"💝 НОК({first_number}, {second_number}) = {result}")
 
         else:
             if method_name == "Прибавление единицы":
                 result = first_number.ADD_1N_N()
-                self.result_label.config(text=f"🎀 {first_number} + 1 = {result}")
+                self.set_result(f"🎀 {first_number} + 1 = {result}")
 
             elif method_name == "Проверка на ноль":
                 is_non_zero = first_number.NZER_N_B()
                 if is_non_zero == 'да':
-                    self.result_label.config(text=f"✅ {first_number} ≠ 0")
+                    self.set_result(f"✅ {first_number} ≠ 0")
                 else:
-                    self.result_label.config(text=f"❌ {first_number} = 0")
+                    self.set_result(f"❌ {first_number} = 0")
 
             elif method_name == "Умножение на цифру":
                 digit_str = self.digit_entry.get().strip()
@@ -323,7 +351,7 @@ class NaturalApp:
                 digit = int(digit_str)
                 try:
                     result = first_number.MUL_ND_N(digit)
-                    self.result_label.config(text=f"🎀 {first_number} × {digit} = {result}")
+                    self.set_result(f"🎀 {first_number} × {digit} = {result}")
                 except ValueError as e:
                     messagebox.showerror("Ошибка", f"😿 {str(e)}")
                     return
@@ -338,7 +366,7 @@ class NaturalApp:
                     return
                 try:
                     result = first_number.MUL_Nk_N(digit)
-                    self.result_label.config(text=f"🎀 {first_number} × 10{self.to_superscript(digit)} = {result}")
+                    self.set_result(f"🎀 {first_number} × 10{self.to_superscript(digit)} = {result}")
                 except ValueError as e:
                     messagebox.showerror("Ошибка", f"😿 {str(e)}")
                     return

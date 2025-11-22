@@ -93,18 +93,40 @@ class IntegerApp:
         # Изначально скрываем ненужные поля
         self.hide_all_extra_fields()
 
-        # Метка для результата с барби-оформлением
+        # Окно результата (заменил Label на Text с прокруткой колесиком)
         result_frame = tk.Frame(root, bg=self.backlight, bd=3, relief=tk.GROOVE)
-        result_frame.pack(pady=20, padx=25, fill=tk.X)
-        
+        result_frame.pack(pady=10, padx=25, fill=tk.BOTH, expand=False)
+
         result_title = tk.Label(result_frame, text="🎀 Результат:", bg=self.backlight, fg="white", 
                                font=("Arial", 11, "bold"))
         result_title.pack(pady=(8, 0))
-        
-        self.result_label = tk.Label(result_frame, text="Здесь появится результат вычислений...", 
-                                    bg="white", fg=self.text_color, font=("Arial", 12), 
-                                    wraplength=380, justify=tk.CENTER, height=3)
-        self.result_label.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        text_container = tk.Frame(result_frame, bg=self.backlight)
+        text_container.pack(pady=8, padx=8, fill=tk.BOTH, expand=True)
+
+        self.result_text = tk.Text(text_container, bg="white", fg=self.text_color, font=("Arial", 12),
+                       wrap=tk.WORD, height=8, relief=tk.SUNKEN, bd=2)
+        self.result_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.result_text.config(state=tk.DISABLED)
+
+        scrollbar = tk.Scrollbar(text_container, command=self.result_text.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.result_text['yscrollcommand'] = scrollbar.set
+
+        def _on_mousewheel(event):
+            self.result_text.yview_scroll(-1 * (event.delta // 120), "units")
+
+        self.result_text.bind('<Enter>', lambda e: self.result_text.focus_set())
+        self.result_text.bind('<MouseWheel>', _on_mousewheel)
+
+        def set_result(text, fg=self.text_color):
+            self.result_text.config(state=tk.NORMAL)
+            self.result_text.delete('1.0', tk.END)
+            self.result_text.insert(tk.END, text)
+            self.result_text.config(fg=fg)
+            self.result_text.config(state=tk.DISABLED)
+
+        self.set_result = set_result
 
         # Кнопка выполнения с барби-темой
         self.calculate_button = tk.Button(root, text="💖 Вычислить!", command=self.calculate, 
@@ -178,7 +200,7 @@ class IntegerApp:
         return Integer(number_str)  # Natural будет создан внутри Integer
 
     def calculate(self):
-        self.result_label.config(text='Вычисляю... 👑', fg=self.text_color)
+        self.set_result('Вычисляю... 👑', fg=self.text_color)
         method_name = self.method_var.get()
 
         # Методы, где требуется ввод первого числа
@@ -192,7 +214,7 @@ class IntegerApp:
             try:
                 natural_number = self.get_Natural(natural_str)
                 result = Integer.TRANS_N_Z(natural_number)
-                self.result_label.config(text=f"✨ Natural('{natural_str}') → {result}")
+                self.set_result(f"✨ Natural('{natural_str}') → {result}")
             except ValueError:
                 if not natural_str:
                     messagebox.showerror("Ошибка", "💔 Пожалуйста, введите натуральное число")
@@ -228,20 +250,20 @@ class IntegerApp:
 
             if method_name == "Сложение двух чисел":
                 result = first_number.ADD_ZZ_Z(second_number)
-                self.result_label.config(text=f"🎀 {first_number} + {second_number} = {result}")
+                self.set_result(f"🎀 {first_number} + {second_number} = {result}")
 
             elif method_name == "Вычитание двух чисел":
                 result = first_number.SUB_ZZ_Z(second_number)
-                self.result_label.config(text=f"🎀 {first_number} - {second_number} = {result}")
+                self.set_result(f"🎀 {first_number} - {second_number} = {result}")
 
             elif method_name == "Умножение двух чисел":
                 result = first_number.MUL_ZZ_Z(second_number)
-                self.result_label.config(text=f"🎀 {first_number} × {second_number} = {result}")
+                self.set_result(f"🎀 {first_number} × {second_number} = {result}")
 
             elif method_name == "Целочисленное деление":
                 try:
                     result = first_number.DIV_ZZ_Z(second_number)
-                    self.result_label.config(text=f"🎀 {first_number} ÷ {second_number} = {result}")
+                    self.set_result(f"🎀 {first_number} ÷ {second_number} = {result}")
                 except ZeroDivisionError:
                     messagebox.showerror("Ошибка", "💔 Деление на ноль невозможно")
                     return
@@ -249,7 +271,7 @@ class IntegerApp:
             elif method_name == "Остаток от деления":
                 try:
                     result = first_number.MOD_ZZ_Z(second_number)
-                    self.result_label.config(text=f"🎀 {first_number} mod {second_number} = {result}")
+                    self.set_result(f"🎀 {first_number} mod {second_number} = {result}")
                 except ZeroDivisionError:
                     messagebox.showerror("Ошибка", "💔 Деление на ноль невозможно")
                     return
@@ -259,7 +281,7 @@ class IntegerApp:
         # Одно-аргументные методы
         if method_name == "Абсолютная величина":
             result = first_number.ABS_Z_N()
-            self.result_label.config(text=f"✨ |{first_number}| = {result}")
+            self.set_result(f"✨ |{first_number}| = {result}")
 
         elif method_name == "Определение знака":
             sign_result = first_number.POZ_Z_D()
@@ -268,11 +290,11 @@ class IntegerApp:
                 0: f"✨ {first_number} — равно нулю",
                 1: f"✨ {first_number} — отрицательное число"
             }
-            self.result_label.config(text=sign_texts[sign_result])
+            self.set_result(sign_texts[sign_result])
 
         elif method_name == "Умножение на -1":
             result = first_number.MUL_ZM_Z()
-            self.result_label.config(text=f"✨ -({first_number}) = {result}")
+            self.set_result(f"✨ -({first_number}) = {result}")
 
 
 def create_IntegerApp(root):
