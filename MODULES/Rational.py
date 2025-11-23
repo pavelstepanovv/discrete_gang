@@ -181,76 +181,87 @@ class Rational:
         # Результат - сокращённая дробь (метод MUL_QQ_Q в конце сокращает дробь)
         return self.MUL_QQ_Q(reciprocal)
 
-# Тесты
-def Rational_tests():
-    print('БАЗОВАЯ ПРОВЕРКА РАЦИОНАЛЬНЫХ ЧИСЕЛ:')
-    x = Rational('8/6')      # = 4/3 после сокращения
-    y = Rational('-9/3')     # = -3 (целое!)
-    z = Integer('12')
-    q = Rational('-9/1')
-    
-    # 1. Сокращение дроби
-    print("ПРОВЕРКА СОКРАЩЕНИЯ ДРОБИ")
-    print(f'{x} = {x.RED_Q_Q()}')          # RED_Q_Q = 4/3
-    print(f'{y} = {y.RED_Q_Q()}')          # RED_Q_Q = -3
-    print(f'{Rational("15/25")} = {Rational("15/25").RED_Q_Q()}')  # 3/5
-    print(f'{Rational("-18/12")} = {Rational("-18/12").RED_Q_Q()}\n')  # -3/2
+# Тестирование
+def tests_for_rationals():
+    # Создаем тестовые рациональные числа
+    rat1 = Rational("1/2")           # 1/2
+    rat2 = Rational("3/4")           # 3/4
+    rat3 = Rational("-2/3")          # -2/3
+    rat4 = Rational("5")             # 5/1
+    rat5 = Rational("0")             # 0/1
+    rat6 = Rational("6/8")           # 6/8 (несокращенная)
+    rat7 = Rational("-9/3")          # -9/3 (несокращенная)
+    rat8 = Rational("7/5")           # 7/5
 
-    # 2. Проверка сокращенного дробного на целое
-    print("ПРОВЕРКА ДРОБИ НА ЦЕЛОЕ")
-    print(f'{x} целое? {x.INT_Q_B()}')   # False
-    print(f'{y} целое? {y.INT_Q_B()}')   # True
-    print(f'{Rational("7/1")} целое? {Rational("7/1").INT_Q_B()}')  # True
-    print(f'{Rational("5/2")} целое? {Rational("5/2").INT_Q_B()}\n')  # False
+    print("=" * 60)
+    print("ТЕСТИРОВАНИЕ ФУНКЦИЙ КЛАССА RATIONAL")
+    print("=" * 60)
 
-    # 3. Преобразование целого в дробное
-    print("ПРЕОБРАЗОВАНИЕ ЦЕЛОГО В ДРОБНОЕ")
-    print(f'Integer({z}) → Rational({Rational.TRANS_Z_Q(z)})')  # 12 = 12/1
-    print(f'Integer(-5) → Rational({Rational.TRANS_Z_Q(Integer("-5"))})')  # -5 = -5/1
-    print(f'Integer(0) → Rational({Rational.TRANS_Z_Q(Integer("0"))})')  # 0 = 0/1
-    print(f'Integer(100) → Rational({Rational.TRANS_Z_Q(Integer("100"))})\n')  # 100 = 100/1
-          
-    # 4. Преобразование сокращенного дробного в целое
-    print("ПРЕОБРАЗОВАНИЕ ДРОБНОГО В ЦЕЛОЕ")
-    print(f'Rational({q}) → Integer({q.TRANS_Q_Z()})')  # -9 = -9
-    print(f'Rational("7/1") → Integer({Rational("7/1").TRANS_Q_Z()})')  # 7
-    print(f'Rational("0/1") → Integer({Rational("0/1").TRANS_Q_Z()})')  # 0
+    # Тест 1: RED_Q_Q - сокращение дроби
+    print("\n1. ТЕСТИРОВАНИЕ СОКРАЩЕНИЯ ДРОБИ (RED_Q_Q):")
+    print(f"   {rat1} = {rat1.RED_Q_Q()}")                    # 1/2 (без изменений)
+    print(f"   {rat6} = {rat6.RED_Q_Q()}")                    # 3/4
+    print(f"   {rat7} = {rat7.RED_Q_Q()}")                    # -3/1
+    print(f"   {rat5} = {rat5.RED_Q_Q()}")                    # 0/1
+
+    # Тест 2: INT_Q_B - проверка на целое число
+    print("\n2. ТЕСТИРОВАНИЕ ПРОВЕРКИ НА ЦЕЛОЕ ЧИСЛО (INT_Q_B):")
+    print(f"   {rat1} является целым? {rat1.INT_Q_B()}")      # нет
+    print(f"   {rat4} является целым? {rat4.INT_Q_B()}")      # да
+    print(f"   {rat5} является целым? {rat5.INT_Q_B()}")      # да
+    print(f"   {rat7.RED_Q_Q()} является целым? {rat7.RED_Q_Q().INT_Q_B()}")  # да
+
+    # Тест 3: TRANS_Z_Q - преобразование целого в дробное
+    print("\n3. ТЕСТИРОВАНИЕ ПРЕОБРАЗОВАНИЯ ЦЕЛОГО В ДРОБНОЕ (TRANS_Z_Q):")
+    int1 = Integer("7")
+    int2 = Integer("-4")
+    int3 = Integer("0")
+    print(f"   Integer({int1}) → Rational({Rational.TRANS_Z_Q(int1)})")  # 7/1
+    print(f"   Integer({int2}) → Rational({Rational.TRANS_Z_Q(int2)})")  # -4/1
+    print(f"   Integer({int3}) → Rational({Rational.TRANS_Z_Q(int3)})")  # 0/1
+
+    # Тест 4: TRANS_Q_Z - преобразование дробного в целое
+    print("\n4. ТЕСТИРОВАНИЕ ПРЕОБРАЗОВАНИЯ ДРОБНОГО В ЦЕЛОЕ (TRANS_Q_Z):")
+    print(f"   Rational({rat4}) → Integer({rat4.TRANS_Q_Z()})")          # 5
+    print(f"   Rational({rat7.RED_Q_Q()}) → Integer({rat7.RED_Q_Q().TRANS_Q_Z()})")  # -3
     try:
-        print(f'4.4 Rational("3/2") → Integer({Rational("3/2").TRANS_Q_Z()})\n')  # Ошибка
+        print(f"   Rational({rat1}) → Integer({rat1.TRANS_Q_Z()})")      # Ошибка
     except ValueError as e:
-        print(f'4.4 Rational("3/2") → Ошибка: {e}\n')
+        print(f"   Rational({rat1}) → Ошибка: {e}")
 
-    a = Rational('1/2')
-    b = Rational('1/3')
-    c = Rational('-2/5')
-    d = Rational('3/4')
+    # Тест 5: ADD_QQ_Q - сложение дробей
+    print("\n5. ТЕСТИРОВАНИЕ СЛОЖЕНИЯ ДРОБЕЙ (ADD_QQ_Q):")
+    print(f"   {rat1} + {rat2} = {rat1.ADD_QQ_Q(rat2)}")      # 5/4
+    print(f"   {rat1} + {rat3} = {rat1.ADD_QQ_Q(rat3)}")      # -1/6
+    print(f"   {rat4} + {rat2} = {rat4.ADD_QQ_Q(rat2)}")      # 23/4
+    print(f"   {rat5} + {rat1} = {rat5.ADD_QQ_Q(rat1)}")      # 1/2
 
-    # 5. Сложение дробей
-    print("СЛОЖЕНИЕ ДРОБЕЙ")
-    print(f'{a} + {b} = {a.ADD_QQ_Q(b)}')  # 5/6
-    print(f'{a} + {c} = {a.ADD_QQ_Q(c)}')  # 1/10
-    print(f'{c} + {d} = {c.ADD_QQ_Q(d)}')  # 7/20
-    print(f'{Rational("2/6")} + {Rational("1/6")} = {Rational("2/6").ADD_QQ_Q(Rational("1/6"))}\n')  # 5/6
-          
-    # 6. Вычитание дробей
-    print("ВЫЧИТАНИЕ ДРОБЕЙ")
-    print(f'{a} - {b} = {a.SUB_QQ_Q(b)}')  # 1/6
-    print(f'{a} - {c} = {a.SUB_QQ_Q(c)}')  # 9/10
-    print(f'{c} - {d} = {c.SUB_QQ_Q(d)}')  # -23/20
-    print(f'{Rational("5/8")} - {Rational("1/8")} = {Rational("5/8").SUB_QQ_Q(Rational("1/8"))}\n')  # 3/8
-    
-    # 7. Умножение дробей
-    print("УМНОЖЕНИЕ ДРОБЕЙ")
-    print(f'{a} ∙ {b} = {a.MUL_QQ_Q(b)}')  # 1/6
-    print(f'{a} ∙ {c} = {a.MUL_QQ_Q(c)}')  # -1/5
-    print(f'{c} ∙ {d} = {c.MUL_QQ_Q(d)}')  # -3/10
-    print(f'{Rational("3/4")} ∙ {Rational("2/3")} = {Rational("3/4").MUL_QQ_Q(Rational("2/3"))}\n')  # 1/2
+    # Тест 6: SUB_QQ_Q - вычитание дробей
+    print("\n6. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ ДРОБЕЙ (SUB_QQ_Q):")
+    print(f"   {rat2} - {rat1} = {rat2.SUB_QQ_Q(rat1)}")      # 1/4
+    print(f"   {rat1} - {rat3} = {rat1.SUB_QQ_Q(rat3)}")      # 7/6
+    print(f"   {rat4} - {rat2} = {rat4.SUB_QQ_Q(rat2)}")      # 17/4
+    print(f"   {rat5} - {rat1} = {rat5.SUB_QQ_Q(rat1)}")      # -1/2
 
-    # 8. Деление дробей (вторая дробь не равна 0)
-    print("ДЕЛЕНИЕ ДРОБЕЙ")
-    print(f'{a} / {b} = {a.DIV_QQ_Q(b)}')  # 3/2
-    print(f'{a} / {c} = {a.DIV_QQ_Q(c)}')  # -5/4
-    print(f'{c} / {d} = {c.DIV_QQ_Q(d)}')  # -8/15
-    print(f'{Rational("14/16")} / {Rational("1/4")} = {Rational("14/16").DIV_QQ_Q(Rational("1/4"))}')  # 3/2
+    # Тест 7: MUL_QQ_Q - умножение дробей
+    print("\n7. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ ДРОБЕЙ (MUL_QQ_Q):")
+    print(f"   {rat1} * {rat2} = {rat1.MUL_QQ_Q(rat2)}")      # 3/8
+    print(f"   {rat1} * {rat3} = {rat1.MUL_QQ_Q(rat3)}")      # -1/3
+    print(f"   {rat4} * {rat2} = {rat4.MUL_QQ_Q(rat2)}")      # 15/4
+    print(f"   {rat5} * {rat1} = {rat5.MUL_QQ_Q(rat1)}")      # 0/1
 
-Rational_tests()
+    # Тест 8: DIV_QQ_Q - деление дробей
+    print("\n8. ТЕСТИРОВАНИЕ ДЕЛЕНИЯ ДРОБЕЙ (DIV_QQ_Q):")
+    print(f"   {rat1} / {rat2} = {rat1.DIV_QQ_Q(rat2)}")      # 2/3
+    print(f"   {rat2} / {rat3} = {rat2.DIV_QQ_Q(rat3)}")      # -9/8
+    print(f"   {rat4} / {rat1} = {rat4.DIV_QQ_Q(rat1)}")      # 10/1
+    try:
+        print(f"   {rat1} / {rat5} = {rat1.DIV_QQ_Q(rat5)}")  # Ошибка
+    except ValueError as e:
+        print(f"   {rat1} / {rat5} → Ошибка: {e}")
+
+    print("\n" + "=" * 60)
+    print("ТЕСТИРОВАНИЕ РАЦИОНАЛЬНЫХ ЧИСЕЛ ЗАВЕРШЕНО!")
+    print("=" * 60)
+
+tests_for_rationals()
