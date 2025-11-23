@@ -1,9 +1,9 @@
 # выполнили Мазеев В., гр. 4384, Калинина А., гр. 4384 и Дровнев Д., гр. 4384
 
 from __future__ import annotations
-from Rational import Rational
-from Integer import Integer
-from Natural import Natural
+from .Rational import Rational
+from .Integer import Integer
+from .Natural import Natural
 
 '''
 Многочлен — представлен в виде словаря {степень: коэффициент},
@@ -623,3 +623,4 @@ def tests_for_polynomials():
     print("=" * 60)
 
 tests_for_polynomials()
+
