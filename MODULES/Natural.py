@@ -3,7 +3,7 @@
 class Natural:
     def __init__(self, num: str):
         num = list(map(int, num))
-        while len(num) > 1 and num[0] == 0:
+        while len(num) > 1 and num[0] == 0:  # удаление незначащих нулей
             num = num[1:]
         self.num = num
     def __str__(self):
@@ -434,25 +434,26 @@ class Natural:
         # Вычисляем НОК по формуле: НОК(a,b) = (a × b) / НОД(a,b)
         return self.MUL_NN_N(other).DIV_NN_N(self.GCF_NN_N(other))
 
-#Тесты
+# Тестирование
 def tests_for_naturales():
-    num1 = Natural("2")
-    num2 = Natural("23")
-    num3 = Natural("1000")
-    num4 = Natural("99")
-    num5 = Natural("0")
-    num6 = Natural("52")
-    num7 = Natural("7")
+    # Создаем тестовые натуральные числа
+    num1 = Natural("2")      # маленькое число
+    num2 = Natural("25")     # двузначное число  
+    num3 = Natural("999")    # большое число (три девятки)
+    num4 = Natural("87")     # двузначное число
+    num5 = Natural("0")      # ноль
+    num6 = Natural("16")     # двузначное число
+    num7 = Natural("9")      # маленькое число
 
     print("=" * 60)
     print("ТЕСТИРОВАНИЕ ФУНКЦИЙ КЛАССА NATURAL")
     print("=" * 60)
 
-    # Тест 1: COM_NN_D - сравнение чисел
-    print("\n1. ТЕСТИРОВАНИЕ СРАВНЕНИЯ (COM_NN_D):")
-    print(f"   {num1} сравнить с {num2}: {num1.COM_NN_D(num2)}")  # 1 (2 < 23)
-    print(f"   {num4} сравнить с {num6}: {num4.COM_NN_D(num6)}")  # 2 (99 > 52)
-    print(f"   {num5} сравнить с {num5}: {num5.COM_NN_D(num5)}")  # 0 (0 == 0)
+    # Тест 1: COM_NN_D - сравнение натуральных чисел
+    print("\n1. ТЕСТИРОВАНИЕ СРАВНЕНИЯ НАТУРАЛЬНЫХ ЧИСЕЛ (COM_NN_D):")
+    print(f"   {num1} сравнить с {num2} = {num1.COM_NN_D(num2)}")  # 1 (2 < 25)
+    print(f"   {num4} сравнить с {num6} = {num4.COM_NN_D(num6)}")  # 2 (87 > 16)
+    print(f"   {num5} сравнить с {num5} = {num5.COM_NN_D(num5)}")  # 0 (0 == 0)
 
     # Тест 2: NZER_N_B - проверка на ноль
     print("\n2. ТЕСТИРОВАНИЕ ПРОВЕРКИ НА НОЛЬ (NZER_N_B):")
@@ -464,64 +465,76 @@ def tests_for_naturales():
     print("\n3. ТЕСТИРОВАНИЕ ДОБАВЛЕНИЯ 1 (ADD_1N_N):")
     print(f"   {num1} + 1 = {num1.ADD_1N_N()}")  # 3
     print(f"   {num5} + 1 = {num5.ADD_1N_N()}")  # 1
-    print(f"   {num4} + 1 = {num4.ADD_1N_N()}")  # 100
+    print(f"   {num3} + 1 = {num3.ADD_1N_N()}")  # 1000
 
-    # Тест 4: ADD_NN_N - сложение
-    print("\n4. ТЕСТИРОВАНИЕ СЛОЖЕНИЯ (ADD_NN_N):")
-    print(f"   {num1} + {num2} = {num1.ADD_NN_N(num2)}")  # 25
-    print(f"   {num3} + {num4} = {num3.ADD_NN_N(num4)}")  # 1099
+    # Тест 4: ADD_NN_N - сложение натуральных чисел
+    print("\n4. ТЕСТИРОВАНИЕ СЛОЖЕНИЯ НАТУРАЛЬНЫХ ЧИСЕЛ (ADD_NN_N):")
+    print(f"   {num1} + {num2} = {num1.ADD_NN_N(num2)}")  # 27
+    print(f"   {num3} + {num4} = {num3.ADD_NN_N(num4)}")  # 1086
+    print(f"   {num5} + {num7} = {num5.ADD_NN_N(num7)}")  # 9
 
-    # Тест 5: SUB_NN_N - вычитание
-    print("\n5. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ (SUB_NN_N):")
-    print(f"   {num2} - {num1} = {num2.SUB_NN_N(num1)}")  # 21
-    print(f"   {num4} - {num2} = {num4.SUB_NN_N(num2)}")  # 76
-    print(f"   {num7} - {num1} = {num7.SUB_NN_N(num1)}")  # 5
+    # Тест 5: SUB_NN_N - вычитание натуральных чисел
+    print("\n5. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ НАТУРАЛЬНЫХ ЧИСЕЛ (SUB_NN_N):")
+    print(f"   {num2} - {num1} = {num2.SUB_NN_N(num1)}")  # 23
+    print(f"   {num4} - {num6} = {num4.SUB_NN_N(num6)}")  # 71
+    print(f"   {num7} - {num1} = {num7.SUB_NN_N(num1)}")  # 7
 
     # Тест 6: MUL_ND_N - умножение на цифру
     print("\n6. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ НА ЦИФРУ (MUL_ND_N):")
     print(f"   {num1} * 5 = {num1.MUL_ND_N(5)}")  # 10
-    print(f"   {num4} * 3 = {num4.MUL_ND_N(3)}")  # 297
-
+    print(f"   {num4} * 3 = {num4.MUL_ND_N(3)}")  # 261
+    print(f"   {num7} * 9 = {num7.MUL_ND_N(9)}")  # 81
 
     # Тест 7: MUL_Nk_N - умножение на 10^k
     print("\n7. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ НА 10^k (MUL_Nk_N):")
     print(f"   {num1} * 10^2 = {num1.MUL_Nk_N(2)}")  # 200
-    print(f"   {num7} * 10^3 = {num7.MUL_Nk_N(3)}")  # 7000
+    print(f"   {num7} * 10^3 = {num7.MUL_Nk_N(3)}")  # 9000
+    print(f"   {num2} * 10^1 = {num2.MUL_Nk_N(1)}")  # 250
 
-    # Тест 8: MUL_NN_N - умножение чисел
-    print("\n8. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ ЧИСЕЛ (MUL_NN_N):")
-    print(f"   {num6} * {num2} = {num6.MUL_NN_N(num2)}")  # 1196
-    print(f"   {num4} * {num4} = {num4.MUL_NN_N(num4)}")  # 9801
-
+    # Тест 8: MUL_NN_N - умножение натуральных чисел
+    print("\n8. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ НАТУРАЛЬНЫХ ЧИСЕЛ (MUL_NN_N):")
+    print(f"   {num6} * {num2} = {num6.MUL_NN_N(num2)}")  # 400
+    print(f"   {num4} * {num4} = {num4.MUL_NN_N(num4)}")  # 7569
+    print(f"   {num1} * {num7} = {num1.MUL_NN_N(num7)}")  # 18
 
     # Тест 9: SUB_NDN_N - вычитание умноженного числа
     print("\n9. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ УМНОЖЕННОГО ЧИСЛА (SUB_NDN_N):")
-    print(f"   {num4} - ({num2} * 2) = {num4.SUB_NDN_N(num2, 2)}")  # 99 - (23 * 2) = 53
-    print(f"   {num3} - ({num1} * 5) = {num3.SUB_NDN_N(num1, 5)}")  # 1000 - (2 * 5) = 990
-    print(f"   {num7} - ({num1} * 3) = {num7.SUB_NDN_N(num1, 3)}")  # 7 - (2 * 3) = 1
+    print(f"   {num4} - ({num2} * 2) = {num4.SUB_NDN_N(num2, 2)}")  # 87 - (25 * 2) = 37
+    print(f"   {num3} - ({num1} * 5) = {num3.SUB_NDN_N(num1, 5)}")  # 999 - (2 * 5) = 989
+    print(f"   {num7} - ({num1} * 3) = {num7.SUB_NDN_N(num1, 3)}")  # 9 - (2 * 3) = 3
 
     # Тест 10: DIV_NN_Dk - нахождение первой цифры частного
     print("\n10. ТЕСТИРОВАНИЕ НАХОЖДЕНИЯ ПЕРВОЙ ЦИФРЫ ЧАСТНОГО (DIV_NN_Dk):")
-    print(f"   {num4} / {num6}: {num4.DIV_NN_Dk(num6)}")  # 99 / 52: (1, 0), т.е. цифра 1, разряд единиц
-    print(f"   {num3} / {num4}: {num3.DIV_NN_Dk(num4)}")  # 1000 / 99: (1, 1), т.е цифра 1, разряд десятков
+    print(f"   {num4} / {num6} = {num4.DIV_NN_Dk(num6)}")  # 87 / 16: цифра 5, позиция 0 (единицы)
+    print(f"   {num3} / {num4} = {num3.DIV_NN_Dk(num4)}")  # 999 / 87: цифра 1, позиция 1 (десятки)
+    print(f"   {num7} / {num1} = {num7.DIV_NN_Dk(num1)}")  # 9 / 2: цифра 4, позиция 0 (единицы)
 
-    # Тест 11: DIV_NN_N - деление чисел
-    print("\n11. ТЕСТИРОВАНИЕ ДЕЛЕНИЯ ЧИСЕЛ (DIV_NN_N):")
-    print(f"   {num3} / {num2} = {num3.DIV_NN_N(num2)}")  # 1000 / 23 = 43
-    print(f"   {num4} / {num1} = {num4.DIV_NN_N(num1)}")  # 99 / 2 = 49
+    # Тест 11: DIV_NN_N - деление натуральных чисел
+    print("\n11. ТЕСТИРОВАНИЕ ДЕЛЕНИЯ НАТУРАЛЬНЫХ ЧИСЕЛ (DIV_NN_N):")
+    print(f"   {num3} / {num2} = {num3.DIV_NN_N(num2)}")  # 999 / 25 = 39
+    print(f"   {num4} / {num1} = {num4.DIV_NN_N(num1)}")  # 87 / 2 = 43
+    print(f"   {num6} / {num7} = {num6.DIV_NN_N(num7)}")  # 16 / 9 = 1
 
     # Тест 12: MOD_NN_N - остаток от деления
     print("\n12. ТЕСТИРОВАНИЕ ОСТАТКА ОТ ДЕЛЕНИЯ (MOD_NN_N):")
-    print(f"   {num3} % {num2} = {num3.MOD_NN_N(num2)}")  # 1000 % 23 = 11
-    print(f"   {num4} % {num1} = {num4.MOD_NN_N(num1)}")  # 99 % 2 = 1
+    print(f"   {num3} % {num2} = {num3.MOD_NN_N(num2)}")  # 999 % 25 = 24
+    print(f"   {num4} % {num1} = {num4.MOD_NN_N(num1)}")  # 87 % 2 = 1
+    print(f"   {num6} % {num7} = {num6.MOD_NN_N(num7)}")  # 16 % 9 = 7
+
     # Тест 13: GCF_NN_N - наибольший общий делитель
     print("\n13. ТЕСТИРОВАНИЕ НАИБОЛЬШЕГО ОБЩЕГО ДЕЛИТЕЛЯ (GCF_NN_N):")
-    print(f"   НОД({num3}, {num4}) = {num3.GCF_NN_N(num4)}")  # НОД(1000, 99) = 1
-    print(f"   НОД({num2}, {num4}) = {num2.GCF_NN_N(num4)}")  # НОД(23, 99) = 1
+    print(f"   НОД({num3}, {num4}) = {num3.GCF_NN_N(num4)}")  # НОД(999, 87) = 3
+    print(f"   НОД({num2}, {num4}) = {num2.GCF_NN_N(num4)}")  # НОД(25, 87) = 1
+    print(f"   НОД({num6}, {num7}) = {num6.GCF_NN_N(num7)}")  # НОД(16, 9) = 1
 
     # Тест 14: LCM_NN_N - наименьшее общее кратное
     print("\n14. ТЕСТИРОВАНИЕ НАИМЕНЬШЕГО ОБЩЕГО КРАТНОГО (LCM_NN_N):")
-    print(f"   НОК({num1}, {num2}) = {num1.LCM_NN_N(num2)}")  # НОК(2, 23) = 46
-    print(f"   НОК({num2}, {num4}) = {num2.LCM_NN_N(num4)}")  # НОК(23, 99) = 2277
+    print(f"   НОК({num1}, {num2}) = {num1.LCM_NN_N(num2)}")  # НОК(2, 25) = 50
+    print(f"   НОК({num2}, {num4}) = {num2.LCM_NN_N(num4)}")  # НОК(25, 87) = 2175
+    print(f"   НОК({num6}, {num7}) = {num6.LCM_NN_N(num7)}")  # НОК(16, 9) = 144
+
+    print("\n" + "=" * 60)
+    print("ТЕСТИРОВАНИЕ НАТУРАЛЬНЫХ ЧИСЕЛ ЗАВЕРШЕНО!")
+    print("=" * 60)
 
 tests_for_naturales()
