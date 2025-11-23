@@ -330,136 +330,130 @@ class Integer:
         return remainder
 
 def tests_for_integers():
-    # Создаем тестовые данные
-    int1 = Integer("123")
-    int2 = Integer("-45")
-    int3 = Integer("0")
-    int4 = Integer("-678")
-    int5 = Integer("999")
-    int6 = Integer("-1")
+    # Создаем тестовые целые числа
+    int1 = Integer("123")      # положительное
+    int2 = Integer("-45")      # отрицательное  
+    int3 = Integer("0")        # ноль
+    int4 = Integer("-678")     # отрицательное
+    int5 = Integer("999")      # положительное
+    int6 = Integer("-1")       # отрицательное
     
     print("=" * 60)
     print("ТЕСТИРОВАНИЕ ФУНКЦИЙ КЛАССА INTEGER")
     print("=" * 60)
 
-    # Тестирование модуля числа
-    print("\n1. ТЕСТИРОВАНИЕ МОДУЛЯ (ABS_Z_N):")
-    print(f"   |{int1}| = {int1.ABS_Z_N()}")
-    print(f"   |{int2}| = {int2.ABS_Z_N()}")
-    print(f"   |{int3}| = {int3.ABS_Z_N()}")
-    print(f"   |{int4}| = {int4.ABS_Z_N()}")
+    # Тест 1: ABS_Z_N - модуль числа
+    print("\n1. ТЕСТИРОВАНИЕ МОДУЛЯ ЧИСЛА (ABS_Z_N):")
+    print(f"   |{int1}| = {int1.ABS_Z_N()}")      # 123
+    print(f"   |{int2}| = {int2.ABS_Z_N()}")      # 45
+    print(f"   |{int3}| = {int3.ABS_Z_N()}")      # 0
+    print(f"   |{int4}| = {int4.ABS_Z_N()}")      # 678
 
-    # Тестирование определения знака
+    # Тест 2: POZ_Z_D - определение знака
     print("\n2. ТЕСТИРОВАНИЕ ОПРЕДЕЛЕНИЯ ЗНАКА (POZ_Z_D):")
-    print(f"   Знак числа {int1}: {int1.POZ_Z_D()}")
-    print(f"   Знак числа {int2}: {int2.POZ_Z_D()}")
-    print(f"   Знак числа {int3}: {int3.POZ_Z_D()}")
-    print(f"   Знак числа {int6}: {int6.POZ_Z_D()}")
+    print(f"   Знак числа {int1} = {int1.POZ_Z_D()}")  # 2 (положительное)
+    print(f"   Знак числа {int2} = {int2.POZ_Z_D()}")  # 1 (отрицательное)
+    print(f"   Знак числа {int3} = {int3.POZ_Z_D()}")  # 0 (ноль)
+    print(f"   Знак числа {int6} = {int6.POZ_Z_D()}")  # 1 (отрицательное)
 
-    # Тестирование умножения на -1
+    # Тест 3: MUL_ZM_Z - умножение на -1
     print("\n3. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ НА -1 (MUL_ZM_Z):")
-    print(f"   -({int1}) = {int1.MUL_ZM_Z()}")
-    print(f"   -({int2}) = {int2.MUL_ZM_Z()}")
-    print(f"   -({int3}) = {int3.MUL_ZM_Z()}")
-    print(f"   -({int5}) = {int5.MUL_ZM_Z()}")
+    print(f"   -({int1}) = {int1.MUL_ZM_Z()}")    # -123
+    print(f"   -({int2}) = {int2.MUL_ZM_Z()}")    # 45
+    print(f"   -({int3}) = {int3.MUL_ZM_Z()}")    # 0
+    print(f"   -({int5}) = {int5.MUL_ZM_Z()}")    # -999
 
-    # Тестирование преобразований между натуральными и целыми числами
+    # Тест 4: TRANS_N_Z - преобразование натурального в целое
     print("\n4. ТЕСТИРОВАНИЕ ПРЕОБРАЗОВАНИЯ NATURAL -> INTEGER (TRANS_N_Z):")
     nat1 = Natural("123")
-    nat2 = Natural("0")
+    nat2 = Natural("0") 
     nat3 = Natural("789")
     
-    int_from_nat1 = Integer.TRANS_N_Z(nat1)
-    int_from_nat2 = Integer.TRANS_N_Z(nat2)
-    int_from_nat3 = Integer.TRANS_N_Z(nat3)
-    
-    print(f"   Natural('123') -> Integer: {int_from_nat1}")
-    print(f"   Natural('0') -> Integer: {int_from_nat2}")
-    print(f"   Natural('789') -> Integer: {int_from_nat3}")
+    print(f"   Natural({nat1}) → Integer({Integer.TRANS_N_Z(nat1)})")  # 123
+    print(f"   Natural({nat2}) → Integer({Integer.TRANS_N_Z(nat2)})")  # 0
+    print(f"   Natural({nat3}) → Integer({Integer.TRANS_N_Z(nat3)})")  # 789
 
+    # Тест 5: TRANS_Z_N - преобразование целого в натуральное
     print("\n5. ТЕСТИРОВАНИЕ ПРЕОБРАЗОВАНИЯ INTEGER -> NATURAL (TRANS_Z_N):")
-    print(f"   Integer('123') -> Natural: {int1.TRANS_Z_N()}")
-    print(f"   Integer('0') -> Natural: {int3.TRANS_Z_N()}")
-    
-    # Проверка обработки ошибки при преобразовании отрицательного числа
+    print(f"   Integer({int1}) → Natural({int1.TRANS_Z_N()})")  # 123
+    print(f"   Integer({int3}) → Natural({int3.TRANS_Z_N()})")  # 0
     try:
-        int2.TRANS_Z_N()
-        print(f"   Integer('-45') -> Natural: ОШИБКА - исключение не сработало!")
+        print(f"   Integer({int2}) → Natural({int2.TRANS_Z_N()})")  # Ошибка
     except ValueError as e:
-        print(f"   Integer('-45') -> Natural: {e}")
+        print(f"   Integer({int2}) → Ошибка: {e}")
 
-    # Тестирование сложения
-    print("\n6. ТЕСТИРОВАНИЕ СЛОЖЕНИЯ (ADD_ZZ_Z):")
-    print(f"   {int1} + {int5} = {int1.ADD_ZZ_Z(int5)}")
-    print(f"   {int2} + {int4} = {int2.ADD_ZZ_Z(int4)}")
-    print(f"   {int1} + {int2} = {int1.ADD_ZZ_Z(int2)}")
-    print(f"   {int2} + {int1} = {int2.ADD_ZZ_Z(int1)}")
-    print(f"   {int1} + {int3} = {int1.ADD_ZZ_Z(int3)}")
-    print(f"   {int3} + {int2} = {int3.ADD_ZZ_Z(int2)}")
+    # Тест 6: ADD_ZZ_Z - сложение целых чисел
+    print("\n6. ТЕСТИРОВАНИЕ СЛОЖЕНИЯ ЦЕЛЫХ ЧИСЕЛ (ADD_ZZ_Z):")
+    print(f"   {int1} + {int5} = {int1.ADD_ZZ_Z(int5)}")      # 1122
+    print(f"   {int2} + {int4} = {int2.ADD_ZZ_Z(int4)}")      # -723
+    print(f"   {int1} + {int2} = {int1.ADD_ZZ_Z(int2)}")      # 78
+    print(f"   {int2} + {int1} = {int2.ADD_ZZ_Z(int1)}")      # 78
+    print(f"   {int1} + {int3} = {int1.ADD_ZZ_Z(int3)}")      # 123
+    print(f"   {int3} + {int2} = {int3.ADD_ZZ_Z(int2)}")      # -45
     int7 = Integer("45")
-    print(f"   {int2} + {int7} = {int2.ADD_ZZ_Z(int7)}")
+    print(f"   {int2} + {int7} = {int2.ADD_ZZ_Z(int7)}")      # 0
 
-    # Тестирование вычитания
-    print("\n7. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ (SUB_ZZ_Z):")
-    print(f"   {int1} - {int5} = {int1.SUB_ZZ_Z(int5)}")
-    print(f"   {int2} - {int4} = {int2.SUB_ZZ_Z(int4)}")
-    print(f"   {int1} - {int2} = {int1.SUB_ZZ_Z(int2)}")
-    print(f"   {int2} - {int1} = {int2.SUB_ZZ_Z(int1)}")
-    print(f"   {int1} - {int3} = {int1.SUB_ZZ_Z(int3)}")
-    print(f"   {int3} - {int2} = {int3.SUB_ZZ_Z(int2)}")
-    print(f"   {int1} - {int1} = {int1.SUB_ZZ_Z(int1)}")
+    # Тест 7: SUB_ZZ_Z - вычитание целых чисел
+    print("\n7. ТЕСТИРОВАНИЕ ВЫЧИТАНИЯ ЦЕЛЫХ ЧИСЕЛ (SUB_ZZ_Z):")
+    print(f"   {int1} - {int5} = {int1.SUB_ZZ_Z(int5)}")      # -876
+    print(f"   {int2} - {int4} = {int2.SUB_ZZ_Z(int4)}")      # 633
+    print(f"   {int1} - {int2} = {int1.SUB_ZZ_Z(int2)}")      # 168
+    print(f"   {int2} - {int1} = {int2.SUB_ZZ_Z(int1)}")      # -168
+    print(f"   {int1} - {int3} = {int1.SUB_ZZ_Z(int3)}")      # 123
+    print(f"   {int3} - {int2} = {int3.SUB_ZZ_Z(int2)}")      # 45
+    print(f"   {int1} - {int1} = {int1.SUB_ZZ_Z(int1)}")      # 0
 
-    # Тестирование умножения
-    print("\n8. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ (MUL_ZZ_Z):")
-    print(f"   {int1} * {int5} = {int1.MUL_ZZ_Z(int5)}")
-    print(f"   {int2} * {int4} = {int2.MUL_ZZ_Z(int4)}")
-    print(f"   {int1} * {int2} = {int1.MUL_ZZ_Z(int2)}")
-    print(f"   {int1} * {int3} = {int1.MUL_ZZ_Z(int3)}")
-    print(f"   {int3} * {int2} = {int3.MUL_ZZ_Z(int2)}")
+    # Тест 8: MUL_ZZ_Z - умножение целых чисел
+    print("\n8. ТЕСТИРОВАНИЕ УМНОЖЕНИЯ ЦЕЛЫХ ЧИСЕЛ (MUL_ZZ_Z):")
+    print(f"   {int1} * {int5} = {int1.MUL_ZZ_Z(int5)}")      # 122877
+    print(f"   {int2} * {int4} = {int2.MUL_ZZ_Z(int4)}")      # 30510
+    print(f"   {int1} * {int2} = {int1.MUL_ZZ_Z(int2)}")      # -5535
+    print(f"   {int1} * {int3} = {int1.MUL_ZZ_Z(int3)}")      # 0
+    print(f"   {int3} * {int2} = {int3.MUL_ZZ_Z(int2)}")      # 0
     int8 = Integer("1")
-    print(f"   {int1} * {int8} = {int1.MUL_ZZ_Z(int8)}")
-    print(f"   {int1} * {int6} = {int1.MUL_ZZ_Z(int6)}")
+    print(f"   {int1} * {int8} = {int1.MUL_ZZ_Z(int8)}")      # 123
+    print(f"   {int1} * {int6} = {int1.MUL_ZZ_Z(int6)}")      # -123
 
-    # Тестирование целочисленного деления
+    # Тест 9: DIV_ZZ_Z - целочисленное деление
     print("\n9. ТЕСТИРОВАНИЕ ЦЕЛОЧИСЛЕННОГО ДЕЛЕНИЯ (DIV_ZZ_Z):")
     int9 = Integer("25")
     int10 = Integer("5")
-    print(f"   {int9} / {int10} = {int9.DIV_ZZ_Z(int10)}")
+    print(f"   {int9} / {int10} = {int9.DIV_ZZ_Z(int10)}")    # 5
     int11 = Integer("-25")
     int12 = Integer("-5")
-    print(f"   {int11} / {int12} = {int11.DIV_ZZ_Z(int12)}")
-    print(f"   {int9} / {int12} = {int9.DIV_ZZ_Z(int12)}")
-    print(f"   {int11} / {int10} = {int11.DIV_ZZ_Z(int10)}")
-    print(f"   {int1} / {int8} = {int1.DIV_ZZ_Z(int8)}")
-    print(f"   {int1} / {int6} = {int1.DIV_ZZ_Z(int6)}")
+    print(f"   {int11} / {int12} = {int11.DIV_ZZ_Z(int12)}")  # 5
+    print(f"   {int9} / {int12} = {int9.DIV_ZZ_Z(int12)}")    # -5
+    print(f"   {int11} / {int10} = {int11.DIV_ZZ_Z(int10)}")  # -5
+    print(f"   {int1} / {int8} = {int1.DIV_ZZ_Z(int8)}")      # 123
+    print(f"   {int1} / {int6} = {int1.DIV_ZZ_Z(int6)}")      # -123
     int13 = Integer("7")
     int14 = Integer("3")
-    print(f"   {int13} / {int14} = {int13.DIV_ZZ_Z(int14)}")
+    print(f"   {int13} / {int14} = {int13.DIV_ZZ_Z(int14)}")  # 2
     int15 = Integer("-7")
-    print(f"   {int15} / {int14} = {int15.DIV_ZZ_Z(int14)}")
-    print(f"   {int13} / {int14.MUL_ZM_Z()} = {int13.DIV_ZZ_Z(int14.MUL_ZM_Z())}")
-    print(f"   {int3} / {int1} = {int3.DIV_ZZ_Z(int1)}")
-    # Проверка деления на ноль
+    print(f"   {int15} / {int14} = {int15.DIV_ZZ_Z(int14)}")  # -3
+    print(f"   {int13} / {int14.MUL_ZM_Z()} = {int13.DIV_ZZ_Z(int14.MUL_ZM_Z())}")  # -2
+    print(f"   {int3} / {int1} = {int3.DIV_ZZ_Z(int1)}")      # 0
     try:
-        int1.DIV_ZZ_Z(int3)
-        print(f"   {int1} / {int3} = ОШИБКА - исключение не сработало!")
+        print(f"   {int1} / {int3} = {int1.DIV_ZZ_Z(int3)}")  # Ошибка
     except ZeroDivisionError as e:
-        print(f"   {int1} / {int3} = {e}")
+        print(f"   {int1} / {int3} → Ошибка: {e}")
 
-    # Тестирование остатка от деления
+    # Тест 10: MOD_ZZ_Z - остаток от деления
     print("\n10. ТЕСТИРОВАНИЕ ОСТАТКА ОТ ДЕЛЕНИЯ (MOD_ZZ_Z):")
-    print(f"   {int13} % {int14} = {int13.MOD_ZZ_Z(int14)}")
-    print(f"   {int15} % {int14} = {int15.MOD_ZZ_Z(int14)}")
-    print(f"   {int13} % {int14.MUL_ZM_Z()} = {int13.MOD_ZZ_Z(int14.MUL_ZM_Z())}")
-    print(f"   {int15} % {int14.MUL_ZM_Z()} = {int15.MOD_ZZ_Z(int14.MUL_ZM_Z())}")
-    print(f"   {int1} % {int8} = {int1.MOD_ZZ_Z(int8)}")
-    print(f"   {int1} % {int6} = {int1.MOD_ZZ_Z(int6)}")
-    print(f"   {int3} % {int1} = {int3.MOD_ZZ_Z(int1)}")
-    # Проверка деления на ноль
+    print(f"   {int13} % {int14} = {int13.MOD_ZZ_Z(int14)}")  # 1
+    print(f"   {int15} % {int14} = {int15.MOD_ZZ_Z(int14)}")  # 2
+    print(f"   {int13} % {int14.MUL_ZM_Z()} = {int13.MOD_ZZ_Z(int14.MUL_ZM_Z())}")  # 1
+    print(f"   {int15} % {int14.MUL_ZM_Z()} = {int15.MOD_ZZ_Z(int14.MUL_ZM_Z())}")  # 2
+    print(f"   {int1} % {int8} = {int1.MOD_ZZ_Z(int8)}")      # 0
+    print(f"   {int1} % {int6} = {int1.MOD_ZZ_Z(int6)}")      # 0
+    print(f"   {int3} % {int1} = {int3.MOD_ZZ_Z(int1)}")      # 0
     try:
-        int1.MOD_ZZ_Z(int3)
-        print(f"   {int1} % {int3} = ОШИБКА - исключение не сработало!")
+        print(f"   {int1} % {int3} = {int1.MOD_ZZ_Z(int3)}")  # Ошибка
     except ZeroDivisionError as e:
-        print(f"   {int1} % {int3} = {e}")
+        print(f"   {int1} % {int3} → Ошибка: {e}")
+
+    print("\n" + "=" * 60)
+    print("ТЕСТИРОВАНИЕ ЦЕЛЫХ ЧИСЕЛ ЗАВЕРШЕНО!")
+    print("=" * 60)
     
 tests_for_integers()
