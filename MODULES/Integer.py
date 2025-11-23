@@ -1,6 +1,6 @@
 #выполнили Кяримов А., гр. 4381 и Серженко Д., гр. 4384
 
-from Natural import Natural
+from .Natural import Natural
 class Integer:
     def __init__(self, number: str):
         # Инициализация целого числа из строки
@@ -457,3 +457,4 @@ def tests_for_integers():
     print("=" * 60)
     
 tests_for_integers()
+
