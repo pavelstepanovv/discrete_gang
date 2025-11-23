@@ -1,7 +1,7 @@
 # выполнили Сморыго Ю., гр. 4384 и Зайченко Е., гр. 4384
 
-from Natural import Natural
-from Integer import Integer
+from .Natural import Natural
+from .Integer import Integer
 
 '''
 Рациональное число — пара (числитель: целое, знаменатель: натуральное ≥ 1).
@@ -265,3 +265,4 @@ def tests_for_rationals():
     print("=" * 60)
 
 tests_for_rationals()
+
